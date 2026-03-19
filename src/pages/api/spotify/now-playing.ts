@@ -52,6 +52,8 @@ export const GET: APIRoute = async () => {
             albumImageUrl: data.item.album.images[1]?.url ?? data.item.album.images[0]?.url,
             songUrl: data.item.external_urls.spotify,
             playedAt: new Date().toISOString(),
+            progressMs: data.progress_ms ?? 0,
+            durationMs: data.item.duration_ms ?? 0,
           }),
           {
             headers: {
@@ -83,6 +85,8 @@ export const GET: APIRoute = async () => {
               item.track.album.images[1]?.url ?? item.track.album.images[0]?.url,
             songUrl: item.track.external_urls.spotify,
             playedAt: item.played_at,
+            progressMs: item.track.duration_ms ?? 0,
+            durationMs: item.track.duration_ms ?? 0,
           }),
           {
             headers: {

@@ -11,15 +11,15 @@ import Earworm from "../components/Earworm";
     class="flex h-screen items-center justify-center bg-white text-black relative"
     style="font-family: 'Söhne', sans-serif;"
   >
-    <div class="flex flex-col items-center justify-center py-12">
+    <div class="flex flex-col items-center justify-center py-12 -mt-44">
       <div class="inline-flex flex-col items-center" style="font-size: clamp(14.5px, 2.12vw, 22.3px); line-height: normal;">
 
         {/* Bio section */}
-        <div class="w-full" style="margin-top: clamp(20px, 3vh, 60px); font-family: 'Söhne', sans-serif; font-size: 12px; line-height: 1.6;">
+        <div class="w-full" style="margin-top: clamp(10px, 1.5vh, 30px); font-family: 'Söhne', sans-serif; font-size: 12px; line-height: 1.6;">
           <LocationTags
             client:load
             locations={[
-              { city: "Los Angeles, CA", timezone: "PST", timeZoneId: "America/Los_Angeles", color: "#1DD279" },
+              { city: "Los Angeles, CA", timezone: "PST", timeZoneId: "America/Los_Angeles", color: "#FFDF2B" },
               { city: "Memphis, TN", timezone: "CST", timeZoneId: "America/Chicago", color: "#0C6FE1" },
               { city: "New York City, NY", timezone: "EST", timeZoneId: "America/New_York", color: "#F73737" },
             ]}
@@ -29,7 +29,7 @@ import Earworm from "../components/Earworm";
         </div>
 
         {/* Earworm widget */}
-        <div class="w-full" style="margin-top: clamp(35px, 5vh, 70px); font-family: 'Söhne', sans-serif; font-size: 12px;">
+        <div class="w-full" style="margin-top: clamp(35px, 5vh, 70px); font-family: 'Söhne', sans-serif; font-size: 12px; transform: scale(0.75); transform-origin: left center;">
           <Earworm client:visible />
         </div>
 
