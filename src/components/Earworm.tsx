@@ -49,12 +49,12 @@ function Waveform({ progress }: { progress: number }) {
   );
 }
 
-function SpotifyLogo() {
+function SpotifyLogo({ color = "#999" }: { color?: string }) {
   return (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <svg width="12" height="12" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
       <path
-        d="M12 2C17.5228 2 22 6.47715 22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2ZM12 3.5C7.30558 3.5 3.5 7.30558 3.5 12C3.5 16.6944 7.30558 20.5 12 20.5C16.6944 20.5 20.5 16.6944 20.5 12C20.5 7.30558 16.6944 3.5 12 3.5ZM12 14C13.7473 14 15.4224 14.3388 16.9502 14.9541L16.3896 16.3457C15.0375 15.8011 13.5526 15.5 12 15.5C10.4479 15.5 8.96749 15.8006 7.60938 16.3457L7.05078 14.9541C8.58261 14.3393 10.2522 14 12 14ZM12 11C14.0957 11 16.098 11.3982 17.9375 12.1162L17.3926 13.5137C15.7222 12.8617 13.9042 12.5 12 12.5C10.0945 12.5 8.27747 12.8569 6.60938 13.5127L6.06055 12.1172C7.90243 11.393 9.90551 11 12 11ZM12 8C14.4382 8.00003 16.7752 8.45299 18.9258 9.28613L18.6543 9.98535L18.3838 10.6846C16.4047 9.91788 14.2515 9.50003 12 9.5C9.74959 9.50003 7.59533 9.92191 5.61426 10.6846L5.0752 9.28516C7.22393 8.45792 9.56065 8.00003 12 8Z"
-        fill="#999"
+        d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.502 17.305a.748.748 0 0 1-1.03.249c-2.82-1.723-6.37-2.113-10.553-1.158a.75.75 0 0 1-.334-1.462c4.573-1.045 8.497-.595 11.668 1.34a.75.75 0 0 1 .25 1.031zm1.47-3.267a.937.937 0 0 1-1.287.31c-3.228-1.984-8.15-2.56-11.966-1.4a.938.938 0 0 1-.543-1.796c4.36-1.324 9.778-.682 13.486 1.598a.937.937 0 0 1 .31 1.288zm.127-3.403C15.95 8.603 9.27 8.39 5.4 9.56a1.125 1.125 0 0 1-.652-2.153C9.2 6.072 16.56 6.32 20.436 8.97a1.125 1.125 0 0 1-1.337 1.665z"
+        fill={color}
       />
     </svg>
   );
@@ -104,7 +104,7 @@ export default function Earworm() {
   if (loading) {
     return (
       <div
-        className="inline-flex items-center gap-4 rounded-2xl px-5 py-1.5"
+        className="inline-flex items-center gap-4 rounded-2xl px-5 py-3"
         style={{
           background: "rgba(245, 245, 245, 0.5)",
           border: "0.5px solid #E2E2E2",
@@ -131,37 +131,33 @@ export default function Earworm() {
       href={track.songUrl}
       target="_blank"
       rel="noopener noreferrer"
-      className="inline-flex items-center gap-4 rounded-2xl px-5 py-1.5 no-underline transition-all duration-300 ease-out hover:scale-[1.005]"
+      className="flex flex-col gap-3 px-4 py-3 rounded-2xl no-underline transition-all duration-300 ease-out hover:scale-[1.005]"
       style={{
-        background: "rgba(245, 245, 245, 0.5)",
-        border: "0.5px solid #E2E2E2",
+        background: "transparent",
+        border: "none",
         color: "inherit",
         fontFamily: "'Söhne', sans-serif",
         fontSize: "12px",
       }}
     >
-      {/* Green dot with glow */}
-      <span className="relative flex items-center justify-center shrink-0" style={{ width: 28, height: 28 }}>
-        {track.isPlaying && (
-          <span
-            className="absolute rounded-2xl"
-            style={{
-              width: 28,
-              height: 28,
-              background: "rgba(4, 242, 118, 0.2)",
-            }}
-          />
-        )}
-        <span
-          className="relative inline-flex rounded-2xl"
-          style={{
-            width: 10,
-            height: 10,
-            background: track.isPlaying ? "#04F276" : "#CACACA",
-          }}
-        />
+      {/* Status line */}
+      <span className="inline-flex items-center gap-1.5" style={{ transform: "scale(0.85)", transformOrigin: "left center" }}>
+        <span style={{ display: "inline-flex", alignItems: "center", lineHeight: 0 }}><SpotifyLogo color="#DADADA" /></span>
+        <span style={{
+          fontSize: 12,
+          fontWeight: 500,
+          letterSpacing: "0.08em",
+          color: track.isPlaying ? "#75FF4F" : "#E2E2E2",
+          fontFamily: "'Geist Pixel', monospace",
+          textShadow: track.isPlaying ? "0 0 8px rgba(117, 255, 79, 0.6), 0 0 20px rgba(117, 255, 79, 0.3)" : "none",
+          transition: "color 0.3s ease, text-shadow 0.3s ease",
+        }}>
+          {track.isPlaying ? "LISTENING NOW" : "LAST LISTEN"}
+        </span>
       </span>
 
+      {/* Song info */}
+      <div className="inline-flex items-center gap-4">
       {/* Album art */}
       <img
         src={track.albumImageUrl}
@@ -183,9 +179,6 @@ export default function Earworm() {
       </div>
 
 
-      {/* Spotify logo */}
-      <div className="shrink-0 ml-auto">
-        <SpotifyLogo />
       </div>
     </a>
   );
