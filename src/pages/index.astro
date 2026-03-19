@@ -1,0 +1,51 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { LocationTags } from "../components/LocationTags";
+import { CopyEmail } from "../components/CopyEmail";
+import { XIcon, GitHubIcon, FigmaIcon, InstagramIcon, SpotifyIcon } from "../components/SocialIcons";
+import Earworm from "../components/Earworm";
+---
+
+<Layout>
+  <main
+    class="flex h-screen items-center justify-center bg-white text-black relative"
+    style="font-family: 'Söhne', sans-serif;"
+  >
+    <div class="flex flex-col items-center justify-center py-12">
+      <div class="inline-flex flex-col items-center" style="font-size: clamp(14.5px, 2.12vw, 22.3px); line-height: normal;">
+
+        {/* Bio section */}
+        <div class="w-full" style="margin-top: clamp(20px, 3vh, 60px); font-family: 'Söhne', sans-serif; font-size: 12px; line-height: 1.6;">
+          <LocationTags
+            client:load
+            locations={[
+              { city: "Los Angeles, CA", timezone: "PST", timeZoneId: "America/Los_Angeles", color: "#1DD279" },
+              { city: "Memphis, TN", timezone: "CST", timeZoneId: "America/Chicago", color: "#0C6FE1" },
+              { city: "New York City, NY", timezone: "EST", timeZoneId: "America/New_York", color: "#F73737" },
+            ]}
+          />
+          <p class="m-0" style="margin-top: 28px;">
+            My name is Wade and I am a designer turned aspiring design engineer,<br />living and building in Memphis, TN.          </p>
+        </div>
+
+        {/* Earworm widget */}
+        <div class="w-full" style="margin-top: clamp(35px, 5vh, 70px); font-family: 'Söhne', sans-serif; font-size: 12px;">
+          <Earworm client:visible />
+        </div>
+
+        {/* Social links + email */}
+        <div class="w-full flex items-center gap-2" style="margin-top: clamp(60px, 10vh, 120px); font-family: 'Söhne', sans-serif; font-size: 12px;">
+          <span class="mr-3">Reach out!</span>
+          <XIcon client:load />
+          <GitHubIcon client:load />
+          <FigmaIcon client:load />
+          <InstagramIcon client:load />
+          <SpotifyIcon client:load />
+          <span class="mr-1"></span>
+          <CopyEmail client:load email="wade@hellowade.dev" />
+        </div>
+
+      </div>
+    </div>
+  </main>
+</Layout>
