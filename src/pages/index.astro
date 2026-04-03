@@ -11,8 +11,8 @@ import Earworm from "../components/Earworm";
     class="flex h-screen items-center justify-center bg-white text-black relative"
     style="font-family: 'Söhne', sans-serif;"
   >
-    <div class="flex flex-col items-center justify-center py-12 -mt-44">
-      <div class="inline-flex flex-col items-center" style="font-size: clamp(14.5px, 2.12vw, 22.3px); line-height: normal;">
+    <div class="flex flex-col items-center justify-center py-12 -mt-0 md:-mt-44 px-6 md:px-0">
+      <div class="inline-flex flex-col items-center w-full md:w-auto" style="font-size: clamp(14.5px, 2.12vw, 22.3px); line-height: normal;">
 
         {/* Bio section */}
         <div class="w-full" style="margin-top: clamp(10px, 1.5vh, 30px); font-family: 'Söhne', sans-serif; font-size: 12px; line-height: 1.6;">
@@ -34,7 +34,7 @@ import Earworm from "../components/Earworm";
         </div>
 
         {/* Social links + email */}
-        <div class="w-full flex items-center gap-2" style="margin-top: clamp(45px, 7vh, 90px); font-family: 'Söhne', sans-serif; font-size: 12px;">
+        <div class="w-full flex flex-wrap items-center gap-2" style="margin-top: clamp(45px, 7vh, 90px); font-family: 'Söhne', sans-serif; font-size: 12px;">
           <span class="mr-3">Reach out!</span>
           <XIcon client:load />
           <GitHubIcon client:load />
