@@ -25,6 +25,7 @@ export function CopyEmail({ email }: CopyEmailProps) {
       transition={{ type: "spring", duration: 0.4, bounce: 0.2 }}
     >
       <span className="underline underline-offset-2" style={{ textDecorationColor: "rgba(0,0,0,0.3)" }}>{email}</span>
+      <span style={{ width: 16, height: 16, display: "inline-flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
       <AnimatePresence mode="wait">
         {copied ? (
           <motion.span
@@ -78,6 +79,7 @@ export function CopyEmail({ email }: CopyEmailProps) {
           </motion.svg>
         )}
       </AnimatePresence>
+      </span>
     </motion.button>
   )
 }
