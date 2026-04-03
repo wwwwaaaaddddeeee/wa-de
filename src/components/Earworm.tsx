@@ -145,7 +145,7 @@ export default function Earworm() {
         <span style={{ display: "inline-flex", alignItems: "center", lineHeight: 0 }}><SpotifyLogo color="#DADADA" /></span>
         <span style={{
           fontSize: 12,
-          fontWeight: 700,
+          fontWeight: 500,
           letterSpacing: "0.08em",
           color: track.isPlaying ? "#75FF4F" : "#E2E2E2",
           fontFamily: "'Geist Pixel', monospace",
