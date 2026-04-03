@@ -5,3 +5,4 @@ dist/
 ref/
 .DS_Store
 .astro/
+.vercel
