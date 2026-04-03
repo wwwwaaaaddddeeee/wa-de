@@ -19,6 +19,30 @@ const { title = "HELLOWADE" } = Astro.props;
     <title>{title}</title>
   </head>
   <body>
+    <style is:inline>
+      :root {
+        --background: #ffffff;
+        --foreground: #000000;
+        --muted: #999999;
+        --faint: rgba(218, 218, 218, 0.15);
+        --icon-default: #D5D5D5;
+        --icon-hover: #777777;
+        --track-title: #000000;
+        --track-artist: #999999;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --background: #111111;
+          --foreground: #e0e0e0;
+          --muted: #888888;
+          --faint: rgba(255, 255, 255, 0.08);
+          --icon-default: #555555;
+          --icon-hover: #aaaaaa;
+          --track-title: #e0e0e0;
+          --track-artist: #888888;
+        }
+      }
+    </style>
     <slot />
     <Analytics />
     <SpeedInsights />

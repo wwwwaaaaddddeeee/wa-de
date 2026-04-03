@@ -106,8 +106,8 @@ export default function Earworm() {
       <div
         className="inline-flex items-center gap-4 rounded-2xl px-5 py-3"
         style={{
-          background: "rgba(245, 245, 245, 0.5)",
-          border: "0.5px solid #E2E2E2",
+          background: "var(--faint)",
+          border: "0.5px solid var(--faint)",
           width: 420,
           height: 56,
         }}
@@ -163,7 +163,7 @@ export default function Earworm() {
       </div>
 
       {/* Song info */}
-      <div className="inline-flex items-center gap-4" style={{ background: "rgba(218, 218, 218, 0.15)", borderRadius: 12, padding: "8px 12px" }}>
+      <div className="inline-flex items-center gap-4" style={{ background: "var(--faint)", borderRadius: 12, padding: "8px 12px" }}>
       {/* Album art */}
       <img
         src={track.albumImageUrl}
@@ -176,10 +176,10 @@ export default function Earworm() {
 
       {/* Track info */}
       <div className="flex flex-col items-start min-w-0 shrink-0">
-        <span className="font-medium truncate" style={{ fontSize: 13, color: "#000", maxWidth: 130 }}>
+        <span className="font-medium truncate" style={{ fontSize: 13, color: "var(--track-title)", maxWidth: 130 }}>
           {track.title}
         </span>
-        <span className="truncate" style={{ fontSize: 11, color: "#999", maxWidth: 130 }}>
+        <span className="truncate" style={{ fontSize: 11, color: "var(--track-artist)", maxWidth: 130 }}>
           {track.artist}
         </span>
       </div>

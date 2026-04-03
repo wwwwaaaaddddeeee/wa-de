@@ -86,17 +86,17 @@ function FlipTag({ loc, isHovered, onHover, onLeave }: { loc: LocationItem; isHo
   return (
     <span
       className="relative cursor-default inline-flex items-center rounded-full px-2 py-0.5 font-normal"
-      style={{ fontSize: "10px", color: isHovered ? "#999" : "#DADADA", perspective: "600px", transition: "color 0.25s ease" }}
+      style={{ fontSize: "10px", color: isHovered ? "var(--muted)" : "var(--icon-default)", perspective: "600px", transition: "color 0.25s ease" }}
       onMouseEnter={onHover}
       onMouseLeave={onLeave}
     >
       <span
         className="absolute inset-0 rounded-full"
-        style={{ backgroundColor: "rgba(218, 218, 218, 0.15)", transition: "opacity 0.25s ease", opacity: isHovered ? 0 : 1 }}
+        style={{ backgroundColor: "var(--faint)", transition: "opacity 0.25s ease", opacity: isHovered ? 0 : 1 }}
       />
       <span
         className="absolute inset-0 rounded-full"
-        style={{ backgroundColor: "rgba(180, 180, 180, 0.15)", transition: "opacity 0.25s ease", opacity: isHovered ? 1 : 0 }}
+        style={{ backgroundColor: "var(--faint)", transition: "opacity 0.25s ease", opacity: isHovered ? 1 : 0 }}
       />
       <motion.span
         className="relative z-10 inline-block"
@@ -125,7 +125,7 @@ function FlipTag({ loc, isHovered, onHover, onLeave }: { loc: LocationItem; isHo
             left: 0,
             transform: `rotateX(90deg) translateZ(${h / 2}px)`,
             backfaceVisibility: "hidden",
-            color: "#999",
+            color: "var(--muted)",
           }}
         >
           {timeText}
