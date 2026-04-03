@@ -37,7 +37,7 @@ export function LocationTags({ locations }: { locations: LocationItem[] }) {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null)
 
   return (
-    <span className="inline-flex items-center gap-1" style={{ marginLeft: "-8px" }}>
+    <span className="inline-flex items-center gap-1">
       {locations.map((loc, i) => (
         <FlipTag key={loc.city} loc={loc} isHovered={hoveredIndex === i} isAnyHovered={hoveredIndex !== null} hoveredIndex={hoveredIndex} index={i} onHover={() => setHoveredIndex(i)} onLeave={() => setHoveredIndex(null)} />
       ))}

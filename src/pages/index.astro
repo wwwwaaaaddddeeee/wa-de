@@ -15,7 +15,7 @@ import Earworm from "../components/Earworm";
       <div class="inline-flex flex-col items-center w-full md:w-auto" style="font-size: clamp(14.5px, 2.12vw, 22.3px); line-height: normal;">
 
         {/* Bio section */}
-        <div class="w-full" style="margin-top: clamp(10px, 1.5vh, 30px); font-family: 'Söhne', sans-serif; font-size: 12px; line-height: 1.6;">
+        <div class="w-full text-center" style="margin-top: clamp(10px, 1.5vh, 30px); font-family: 'Söhne', sans-serif; font-size: 12px; line-height: 1.6;">
           <LocationTags
             client:load
             locations={[
@@ -29,12 +29,12 @@ import Earworm from "../components/Earworm";
         </div>
 
         {/* Earworm widget */}
-        <div class="w-full" style="margin-top: clamp(45px, 7vh, 90px); font-family: 'Söhne', sans-serif; font-size: 12px; transform: scale(1); transform-origin: left center;">
+        <div class="w-full flex justify-center" style="margin-top: clamp(45px, 7vh, 90px); font-family: 'Söhne', sans-serif; font-size: 12px;">
           <Earworm client:visible />
         </div>
 
         {/* Social links + email */}
-        <div class="w-full flex flex-wrap items-center gap-2" style="margin-top: clamp(45px, 7vh, 90px); font-family: 'Söhne', sans-serif; font-size: 12px;">
+        <div class="w-full flex flex-wrap items-center justify-center gap-2" style="margin-top: clamp(45px, 7vh, 90px); font-family: 'Söhne', sans-serif; font-size: 12px;">
           <span class="mr-3">Reach out!</span>
           <XIcon client:load />
           <GitHubIcon client:load />
