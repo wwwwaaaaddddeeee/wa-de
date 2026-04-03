@@ -131,7 +131,7 @@ export default function Earworm() {
       href={track.songUrl}
       target="_blank"
       rel="noopener noreferrer"
-      className="flex flex-col gap-1.5 px-4 py-3 rounded-2xl no-underline transition-all duration-300 ease-out hover:scale-[1.005]"
+      className="flex flex-row items-stretch gap-0 rounded-2xl no-underline transition-all duration-300 ease-out hover:scale-[1.005]"
       style={{
         background: "transparent",
         border: "none",
@@ -140,21 +140,27 @@ export default function Earworm() {
         fontSize: "12px",
       }}
     >
-      {/* Status line */}
-      <span className="inline-flex items-center gap-1.5" style={{ transform: "scale(0.85)", transformOrigin: "left center" }}>
-        <span style={{ display: "inline-flex", alignItems: "center", lineHeight: 0 }}><SpotifyLogo color="#DADADA" /></span>
-        <span style={{
-          fontSize: 12,
-          fontWeight: 500,
-          letterSpacing: "0.08em",
-          color: track.isPlaying ? "#75FF4F" : "#E2E2E2",
-          fontFamily: "'Geist Pixel', monospace",
-          textShadow: track.isPlaying ? "0 0 8px rgba(117, 255, 79, 0.6), 0 0 20px rgba(117, 255, 79, 0.3)" : "none",
-          transition: "color 0.3s ease, text-shadow 0.3s ease",
+      {/* Status line - left side */}
+      <div style={{ display: "flex", alignItems: "center", paddingRight: 10 }}>
+        <span className="inline-flex items-center gap-1.5" style={{
+          transform: "scale(0.85)",
+          transformOrigin: "left center",
+          whiteSpace: "nowrap",
         }}>
-          {track.isPlaying ? "LISTENING NOW" : "LAST LISTEN"}
+          <span style={{ display: "inline-flex", alignItems: "center", lineHeight: 0 }}><SpotifyLogo color="#DADADA" /></span>
+          <span style={{
+            fontSize: 10,
+            fontWeight: 500,
+            letterSpacing: "0.08em",
+            color: track.isPlaying ? "#75FF4F" : "#E2E2E2",
+            fontFamily: "'Geist Pixel', monospace",
+            textShadow: track.isPlaying ? "0 0 8px rgba(117, 255, 79, 0.6), 0 0 20px rgba(117, 255, 79, 0.3)" : "none",
+            transition: "color 0.3s ease, text-shadow 0.3s ease",
+          }}>
+            {track.isPlaying ? "LISTENING NOW" : "LAST LISTEN"}
+          </span>
         </span>
-      </span>
+      </div>
 
       {/* Song info */}
       <div className="inline-flex items-center gap-4" style={{ background: "rgba(218, 218, 218, 0.15)", borderRadius: 12, padding: "8px 12px" }}>
