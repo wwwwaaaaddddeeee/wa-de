@@ -19,7 +19,7 @@ export function XIcon() {
   const [hovered, setHovered] = useState(false)
 
   return (
-    <IconWrapper>
+    <IconWrapper href="https://x.com/brianawade">
       <svg
         width="12"
         height="12"
@@ -42,7 +42,7 @@ export function GitHubIcon() {
   const [hovered, setHovered] = useState(false)
 
   return (
-    <IconWrapper>
+    <IconWrapper href="https://github.com/wwwwaaaaddddeeee">
       <svg
         width="12"
         height="12"
@@ -65,7 +65,7 @@ export function FigmaIcon() {
   const [hovered, setHovered] = useState(false)
 
   return (
-    <IconWrapper>
+    <IconWrapper href="https://www.figma.com/@brianawade">
       <svg
         width="12"
         height="12"
@@ -88,7 +88,7 @@ export function InstagramIcon() {
   const [hovered, setHovered] = useState(false)
 
   return (
-    <IconWrapper>
+    <IconWrapper href="https://www.instagram.com/brianawade/">
       <svg
         width="12"
         height="12"
@@ -111,7 +111,7 @@ export function SpotifyIcon() {
   const [hovered, setHovered] = useState(false)
 
   return (
-    <IconWrapper>
+    <IconWrapper href="https://open.spotify.com/user/brianawade">
       <svg
         width="12"
         height="12"
