@@ -21,7 +21,6 @@ export function CopyEmail({ email }: CopyEmailProps) {
       onClick={handleCopy}
       className="inline-flex cursor-pointer items-center gap-1.5 border-none bg-transparent p-0"
       style={{ fontSize: "12px", fontFamily: "'Söhne', sans-serif" }}
-      whileHover={{ scale: 1.02 }}
       whileTap={{ scale: 0.95 }}
       transition={{ type: "spring", duration: 0.4, bounce: 0.2 }}
     >

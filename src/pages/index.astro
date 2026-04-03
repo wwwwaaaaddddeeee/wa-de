@@ -2,7 +2,7 @@
 import Layout from "../layouts/Layout.astro";
 import { LocationTags } from "../components/LocationTags";
 import { CopyEmail } from "../components/CopyEmail";
-import { XIcon, GitHubIcon, FigmaIcon, InstagramIcon, SpotifyIcon } from "../components/SocialIcons";
+import { XIcon, GitHubIcon, FigmaIcon, InstagramIcon, SpotifyIcon, NpmIcon } from "../components/SocialIcons";
 import Earworm from "../components/Earworm";
 ---
 
@@ -37,10 +37,11 @@ import Earworm from "../components/Earworm";
         <div class="w-full flex flex-wrap items-center justify-center gap-2" style="margin-top: clamp(45px, 7vh, 90px); font-family: 'Söhne', sans-serif; font-size: 12px;">
           <span class="mr-3">Reach out!</span>
           <XIcon client:load />
-          <GitHubIcon client:load />
-          <FigmaIcon client:load />
           <InstagramIcon client:load />
           <SpotifyIcon client:load />
+          <FigmaIcon client:load />
+          <GitHubIcon client:load />
+          <NpmIcon client:load />
           <span class="mr-1"></span>
           <CopyEmail client:load email="wade@hellowade.dev" />
         </div>
