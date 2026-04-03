@@ -131,7 +131,7 @@ export default function Earworm() {
       href={track.songUrl}
       target="_blank"
       rel="noopener noreferrer"
-      className="flex flex-col gap-3 px-4 py-3 rounded-2xl no-underline transition-all duration-300 ease-out hover:scale-[1.005]"
+      className="flex flex-col gap-1.5 px-4 py-3 rounded-2xl no-underline transition-all duration-300 ease-out hover:scale-[1.005]"
       style={{
         background: "transparent",
         border: "none",
@@ -145,7 +145,7 @@ export default function Earworm() {
         <span style={{ display: "inline-flex", alignItems: "center", lineHeight: 0 }}><SpotifyLogo color="#DADADA" /></span>
         <span style={{
           fontSize: 12,
-          fontWeight: 500,
+          fontWeight: 700,
           letterSpacing: "0.08em",
           color: track.isPlaying ? "#75FF4F" : "#E2E2E2",
           fontFamily: "'Geist Pixel', monospace",
@@ -157,7 +157,7 @@ export default function Earworm() {
       </span>
 
       {/* Song info */}
-      <div className="inline-flex items-center gap-4">
+      <div className="inline-flex items-center gap-4" style={{ background: "rgba(218, 218, 218, 0.15)", borderRadius: 12, padding: "8px 12px" }}>
       {/* Album art */}
       <img
         src={track.albumImageUrl}
