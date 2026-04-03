@@ -86,7 +86,7 @@ function FlipTag({ loc, isHovered, onHover, onLeave }: { loc: LocationItem; isHo
   return (
     <span
       className="relative cursor-default inline-flex items-center rounded-full px-2 py-0.5 font-normal"
-      style={{ fontSize: "10px", color: isHovered ? loc.color : "#DADADA", perspective: "600px", transition: "color 0.25s ease" }}
+      style={{ fontSize: "10px", color: isHovered ? "#999" : "#DADADA", perspective: "600px", transition: "color 0.25s ease" }}
       onMouseEnter={onHover}
       onMouseLeave={onLeave}
     >
@@ -96,7 +96,7 @@ function FlipTag({ loc, isHovered, onHover, onLeave }: { loc: LocationItem; isHo
       />
       <span
         className="absolute inset-0 rounded-full"
-        style={{ backgroundColor: `${loc.color}1A`, transition: "opacity 0.25s ease", opacity: isHovered ? 1 : 0 }}
+        style={{ backgroundColor: "rgba(180, 180, 180, 0.15)", transition: "opacity 0.25s ease", opacity: isHovered ? 1 : 0 }}
       />
       <motion.span
         className="relative z-10 inline-block"
@@ -125,7 +125,7 @@ function FlipTag({ loc, isHovered, onHover, onLeave }: { loc: LocationItem; isHo
             left: 0,
             transform: `rotateX(90deg) translateZ(${h / 2}px)`,
             backfaceVisibility: "hidden",
-            color: loc.color,
+            color: "#999",
           }}
         >
           {timeText}
