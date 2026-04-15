@@ -24,17 +24,17 @@ import Earworm from "../components/Earworm";
               { city: "New York City, NY", timezone: "EST", timeZoneId: "America/New_York", color: "#F73737" },
             ]}
           />
-          <p class="m-0" style="margin-top: 40px;">
-            Call me Wade – a designer, living, learning and building in Memphis, TN. Lets figure it out!</p>
+          <p class="m-0" style="margin-top: 64px;">
+            Call me Wade – a designer, living, learning and building<br />in Memphis, TN. Lets figure it out!</p>
         </div>
 
         {/* Earworm widget */}
-        <div class="w-full flex justify-start" style="margin-top: clamp(24px, 4vh, 48px); font-size: 14px;">
+        <div class="w-full flex justify-start" style="margin-top: clamp(40px, 6vh, 72px); font-size: 14px;">
           <Earworm client:visible />
         </div>
 
-        {/* Social links + email */}
-        <div class="w-full flex flex-wrap items-center justify-start gap-2" style="margin-top: clamp(45px, 7vh, 90px); font-size: 14px;">
+        {/* Social links */}
+        <div class="w-full flex flex-wrap items-center justify-start gap-2" style="margin-top: clamp(80px, 12vh, 144px); font-size: 14px;">
           <LinkedInIcon client:load />
           <XIcon client:load />
           <InstagramIcon client:load />
@@ -42,7 +42,10 @@ import Earworm from "../components/Earworm";
           <FigmaIcon client:load />
           <GitHubIcon client:load />
           <NpmIcon client:load />
-          <span class="ml-4"></span>
+        </div>
+
+        {/* Email */}
+        <div class="w-full" style="margin-top: 20px; font-size: 14px;">
           <CopyEmail client:load email="wade@hellowade.dev" />
         </div>
 

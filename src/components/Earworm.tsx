@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useRef, useCallback } from "react";
 
 interface SpotifyTrack {
   isPlaying: boolean;
@@ -57,6 +57,51 @@ function SpotifyLogo({ color = "#999" }: { color?: string }) {
         fill={color}
       />
     </svg>
+  );
+}
+
+function ScrollingText({ children }: { children: React.ReactNode }) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const textRef = useRef<HTMLDivElement>(null);
+  const [shouldScroll, setShouldScroll] = useState(false);
+  const [textWidth, setTextWidth] = useState(0);
+
+  const checkOverflow = useCallback(() => {
+    if (containerRef.current && textRef.current) {
+      const containerW = containerRef.current.offsetWidth;
+      const textW = textRef.current.scrollWidth;
+      setShouldScroll(textW > containerW);
+      setTextWidth(textW);
+    }
+  }, []);
+
+  useEffect(() => {
+    checkOverflow();
+  }, [children, checkOverflow]);
+
+  return (
+    <div ref={containerRef} style={{ overflow: "hidden", flexShrink: 1, minWidth: 0 }}>
+      <div
+        ref={textRef}
+        style={{
+          display: "inline-flex",
+          gap: 4,
+          whiteSpace: "nowrap",
+          fontSize: 11,
+          ...(shouldScroll ? {
+            animation: `marquee ${Math.max(textWidth / 25, 5)}s linear infinite`,
+          } : {}),
+        }}
+      >
+        {children}
+        {shouldScroll && (
+          <>
+            <span style={{ padding: "0 24px", opacity: 0.3 }}>·</span>
+            {children}
+          </>
+        )}
+      </div>
+    </div>
   );
 }
 
@@ -131,7 +176,7 @@ export default function Earworm() {
       href={track.songUrl}
       target="_blank"
       rel="noopener noreferrer"
-      className="flex flex-row items-center gap-2 no-underline transition-all duration-300 ease-out hover:scale-[1.005]"
+      className="flex flex-col items-start gap-1.5 no-underline transition-all duration-300 ease-out hover:scale-[1.005]"
       style={{
         background: "transparent",
         border: "none",
@@ -140,15 +185,15 @@ export default function Earworm() {
       }}
     >
       {/* Status pill */}
-      <div className="inline-flex items-center gap-1.5" style={{
+      <div className="inline-flex items-center gap-1" style={{
         background: track.isPlaying ? "rgba(117, 255, 79, 0.05)" : "transparent",
         border: track.isPlaying ? "0.5px solid rgba(117, 255, 79, 0.3)" : "0.5px solid rgba(0,0,0,0.06)",
-        borderRadius: 999, padding: "5px 10px", whiteSpace: "nowrap", height: 30,
+        borderRadius: 999, padding: "2px 7px", whiteSpace: "nowrap",
         transition: "background 0.3s ease, border 0.3s ease",
       }}>
-        <span style={{ display: "inline-flex", alignItems: "center", lineHeight: 0 }}><SpotifyLogo color="#DADADA" /></span>
+        <span style={{ display: "inline-flex", alignItems: "center", lineHeight: 0, transform: "scale(0.7)", transformOrigin: "center" }}><SpotifyLogo color="#DADADA" /></span>
         <span style={{
-          fontSize: 9,
+          fontSize: 7,
           fontWeight: 500,
           letterSpacing: "0.08em",
           color: track.isPlaying ? "#75FF4F" : "#E2E2E2",
@@ -161,7 +206,7 @@ export default function Earworm() {
       </div>
 
       {/* Song pill */}
-      <div className="inline-flex items-center gap-2" style={{ background: "var(--faint)", border: "0.5px solid rgba(0,0,0,0.12)", borderRadius: 999, padding: "5px 10px", height: 30 }}>
+      <div className="inline-flex items-center justify-center gap-2" style={{ background: "var(--faint)", border: "0.5px solid rgba(0,0,0,0.12)", borderRadius: 999, padding: "5px 10px", height: 30, maxWidth: 240, overflow: "hidden" }}>
         <img
           src={track.albumImageUrl}
           alt={track.album}
@@ -170,12 +215,10 @@ export default function Earworm() {
           className="shrink-0"
           style={{ borderRadius: 4 }}
         />
-        <span className="truncate" style={{ fontSize: 11, color: "var(--track-title)", whiteSpace: "nowrap" }}>
-          {track.title}
-        </span>
-        <span className="truncate font-semibold" style={{ fontSize: 11, color: "var(--track-artist)", whiteSpace: "nowrap" }}>
-          {track.artist}
-        </span>
+        <ScrollingText>
+          <span style={{ color: "var(--track-title)" }}>{track.title}</span>
+          <span className="font-semibold" style={{ color: "var(--track-artist)" }}>{track.artist}</span>
+        </ScrollingText>
       </div>
     </a>
   );
