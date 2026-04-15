@@ -9,13 +9,13 @@ import Earworm from "../components/Earworm";
 <Layout>
   <main
     class="flex h-screen items-center justify-center relative"
-    style="background: var(--background); color: var(--foreground); font-family: 'Söhne', sans-serif;"
+    style="background: var(--background); color: var(--foreground);"
   >
     <div class="flex flex-col items-center justify-center py-12 -mt-0 md:-mt-44 px-6 md:px-0">
-      <div class="inline-flex flex-col items-center w-full max-w-[352px]" style="font-size: clamp(14.5px, 2.12vw, 22.3px); line-height: normal;">
+      <div class="inline-flex flex-col items-center w-full max-w-[400px]" style="font-size: clamp(14.5px, 2.12vw, 22.3px); line-height: normal;">
 
         {/* Bio section */}
-        <div class="w-full text-center" style="margin-top: clamp(10px, 1.5vh, 30px); font-family: 'Söhne', sans-serif; font-size: 12px; line-height: 1.6;">
+        <div class="w-full text-center" style="margin-top: clamp(10px, 1.5vh, 30px); font-size: 14px; line-height: 1.6;">
           <LocationTags
             client:load
             locations={[
@@ -29,12 +29,12 @@ import Earworm from "../components/Earworm";
         </div>
 
         {/* Earworm widget */}
-        <div class="w-full flex justify-center" style="margin-top: clamp(24px, 4vh, 48px); font-family: 'Söhne', sans-serif; font-size: 12px;">
+        <div class="w-full flex justify-center" style="margin-top: clamp(24px, 4vh, 48px); font-size: 14px;">
           <Earworm client:visible />
         </div>
 
         {/* Social links + email */}
-        <div class="w-full flex flex-wrap items-center justify-center gap-2" style="margin-top: clamp(45px, 7vh, 90px); font-family: 'Söhne', sans-serif; font-size: 12px;">
+        <div class="w-full flex flex-wrap items-center justify-center gap-2" style="margin-top: clamp(45px, 7vh, 90px); font-size: 14px;">
           <LinkedInIcon client:load />
           <XIcon client:load />
           <InstagramIcon client:load />

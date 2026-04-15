@@ -136,8 +136,7 @@ export default function Earworm() {
         background: "transparent",
         border: "none",
         color: "inherit",
-        fontFamily: "'Söhne', sans-serif",
-        fontSize: "12px",
+        fontSize: "14px",
       }}
     >
       {/* Status line - left side */}
