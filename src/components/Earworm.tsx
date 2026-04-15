@@ -131,7 +131,7 @@ export default function Earworm() {
       href={track.songUrl}
       target="_blank"
       rel="noopener noreferrer"
-      className="flex flex-col items-center gap-2 rounded-2xl no-underline transition-all duration-300 ease-out hover:scale-[1.005]"
+      className="flex flex-row items-center gap-2 no-underline transition-all duration-300 ease-out hover:scale-[1.005]"
       style={{
         background: "transparent",
         border: "none",
@@ -139,31 +139,12 @@ export default function Earworm() {
         fontSize: "14px",
       }}
     >
-      {/* Song info */}
-      <div className="inline-flex items-center gap-4" style={{ background: "var(--faint)", borderRadius: 12, padding: "8px 12px" }}>
-        <img
-          src={track.albumImageUrl}
-          alt={track.album}
-          width={40}
-          height={40}
-          className="shrink-0"
-          style={{ borderRadius: 6 }}
-        />
-        <div className="flex flex-col items-start min-w-0 shrink-0">
-          <span className="font-medium truncate" style={{ fontSize: 13, color: "var(--track-title)", maxWidth: 130 }}>
-            {track.title}
-          </span>
-          <span className="truncate" style={{ fontSize: 11, color: "var(--track-artist)", maxWidth: 130 }}>
-            {track.artist}
-          </span>
-        </div>
-      </div>
-
-      {/* Status label */}
-      <span className="inline-flex items-center gap-1" style={{
-        whiteSpace: "nowrap",
-        transform: "scale(0.8)",
-        transformOrigin: "center",
+      {/* Status pill */}
+      <div className="inline-flex items-center gap-1.5" style={{
+        background: track.isPlaying ? "rgba(117, 255, 79, 0.05)" : "transparent",
+        border: track.isPlaying ? "0.5px solid rgba(117, 255, 79, 0.3)" : "0.5px solid rgba(0,0,0,0.06)",
+        borderRadius: 999, padding: "5px 10px", whiteSpace: "nowrap", height: 30,
+        transition: "background 0.3s ease, border 0.3s ease",
       }}>
         <span style={{ display: "inline-flex", alignItems: "center", lineHeight: 0 }}><SpotifyLogo color="#DADADA" /></span>
         <span style={{
@@ -177,7 +158,25 @@ export default function Earworm() {
         }}>
           {track.isPlaying ? "LISTENING NOW" : "LAST LISTEN"}
         </span>
-      </span>
+      </div>
+
+      {/* Song pill */}
+      <div className="inline-flex items-center gap-2" style={{ background: "var(--faint)", border: "0.5px solid rgba(0,0,0,0.12)", borderRadius: 999, padding: "5px 10px", height: 30 }}>
+        <img
+          src={track.albumImageUrl}
+          alt={track.album}
+          width={20}
+          height={20}
+          className="shrink-0"
+          style={{ borderRadius: 4 }}
+        />
+        <span className="truncate" style={{ fontSize: 11, color: "var(--track-title)", whiteSpace: "nowrap" }}>
+          {track.title}
+        </span>
+        <span className="truncate font-semibold" style={{ fontSize: 11, color: "var(--track-artist)", whiteSpace: "nowrap" }}>
+          {track.artist}
+        </span>
+      </div>
     </a>
   );
 }
