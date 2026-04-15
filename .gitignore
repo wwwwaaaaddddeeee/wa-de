@@ -6,3 +6,4 @@ ref/
 .DS_Store
 .astro/
 .vercel
+.env*.local

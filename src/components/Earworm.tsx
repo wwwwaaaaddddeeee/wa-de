@@ -116,15 +116,36 @@ export default function Earworm() {
       const res = await fetch("/api/spotify/now-playing");
       if (!res.ok) throw new Error();
       const data = await res.json();
+      setError(false);
       if (data.title) {
         setTrack(data);
-        setLocalProgress(data.progressMs);
-        setError(false);
+        setLocalProgress(data.progressMs ?? 0);
       } else {
-        setTrack(null);
+        setTrack({
+          isPlaying: false,
+          title: "",
+          artist: "",
+          album: "",
+          albumImageUrl: "",
+          songUrl: "",
+          playedAt: "",
+          progressMs: 0,
+          durationMs: 0,
+        });
       }
     } catch {
       setError(true);
+      setTrack({
+        isPlaying: false,
+        title: "",
+        artist: "",
+        album: "",
+        albumImageUrl: "",
+        songUrl: "",
+        playedAt: "",
+        progressMs: 0,
+        durationMs: 0,
+      });
     } finally {
       setLoading(false);
     }
@@ -146,80 +167,171 @@ export default function Earworm() {
     return () => clearInterval(interval);
   }, [track?.isPlaying, track?.durationMs]);
 
-  if (loading) {
+  if (loading || !track) {
     return (
       <div
-        className="inline-flex items-center gap-4 rounded-2xl px-5 py-3"
-        style={{
-          background: "var(--faint)",
-          border: "0.5px solid var(--faint)",
-          width: 420,
-          height: 56,
-        }}
+        className="flex flex-col items-start gap-1.5"
+        style={{ fontSize: "14px", opacity: 0.7 }}
       >
-        <div className="w-3 h-3 rounded-2xl animate-pulse" style={{ background: "rgba(0,0,0,0.08)" }} />
-        <div className="w-10 h-10 rounded-md animate-pulse" style={{ background: "rgba(0,0,0,0.05)" }} />
-        <div className="flex flex-col gap-1.5">
-          <div className="h-3 w-24 rounded animate-pulse" style={{ background: "rgba(0,0,0,0.05)" }} />
-          <div className="h-2.5 w-16 rounded animate-pulse" style={{ background: "rgba(0,0,0,0.04)" }} />
-        </div>
+        <div
+          className="inline-flex items-center gap-1 rounded-full animate-pulse"
+          style={{
+            border: "0.5px solid rgba(0,0,0,0.06)",
+            padding: "2px 7px",
+            height: 22,
+            width: 108,
+            background: "rgba(0,0,0,0.04)",
+          }}
+        />
+        <div
+          className="inline-flex items-center gap-2 rounded-full animate-pulse"
+          style={{
+            border: "0.5px solid rgba(0,0,0,0.08)",
+            padding: "5px 10px",
+            height: 30,
+            width: "min(240px, 70vw)",
+            maxWidth: "min(240px, 70vw)",
+            background: "var(--faint)",
+          }}
+        />
       </div>
     );
   }
 
-  if (error || !track) return null;
+  const hasTrack = Boolean(track.title?.trim());
+  const isPlaying = track.isPlaying && hasTrack;
+  const statusMuted = !isPlaying;
+  const songPillMuted = !hasTrack;
 
-  const progress = track.durationMs > 0 ? localProgress / track.durationMs : 0;
-
-  return (
-    <a
-      href={track.songUrl}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="flex flex-col items-start gap-1.5 no-underline transition-all duration-300 ease-out hover:scale-[1.005]"
-      style={{
-        background: "transparent",
-        border: "none",
-        color: "inherit",
-        fontSize: "14px",
-      }}
-    >
+  const body = (
+    <>
       {/* Status pill */}
-      <div className="inline-flex items-center gap-1" style={{
-        background: track.isPlaying ? "rgba(117, 255, 79, 0.05)" : "transparent",
-        border: track.isPlaying ? "0.5px solid rgba(117, 255, 79, 0.3)" : "0.5px solid rgba(0,0,0,0.06)",
-        borderRadius: 999, padding: "2px 7px", whiteSpace: "nowrap",
-        transition: "background 0.3s ease, border 0.3s ease",
-      }}>
-        <span style={{ display: "inline-flex", alignItems: "center", lineHeight: 0, transform: "scale(0.7)", transformOrigin: "center" }}><SpotifyLogo color="#DADADA" /></span>
-        <span style={{
-          fontSize: 7,
-          fontWeight: 500,
-          letterSpacing: "0.08em",
-          color: track.isPlaying ? "#75FF4F" : "#E2E2E2",
-          fontFamily: "'Geist Pixel', monospace",
-          textShadow: track.isPlaying ? "0 0 8px rgba(117, 255, 79, 0.6), 0 0 20px rgba(117, 255, 79, 0.3)" : "none",
-          transition: "color 0.3s ease, text-shadow 0.3s ease",
-        }}>
-          {track.isPlaying ? "LISTENING NOW" : "LAST LISTEN"}
+      <div
+        className="inline-flex items-center gap-1"
+        style={{
+          background: isPlaying ? "rgba(117, 255, 79, 0.05)" : "transparent",
+          border: isPlaying ? "0.5px solid rgba(117, 255, 79, 0.3)" : "0.5px solid rgba(0,0,0,0.06)",
+          borderRadius: 999,
+          padding: "2px 7px",
+          whiteSpace: "nowrap",
+          transition: "background 0.3s ease, border 0.3s ease, opacity 0.3s ease",
+          opacity: statusMuted ? 0.55 : 1,
+        }}
+      >
+        <span
+          style={{
+            display: "inline-flex",
+            alignItems: "center",
+            lineHeight: 0,
+            transform: "scale(0.7)",
+            transformOrigin: "center",
+            opacity: statusMuted ? 0.5 : 1,
+          }}
+        >
+          <SpotifyLogo color={statusMuted ? "var(--muted)" : "#DADADA"} />
+        </span>
+        <span
+          style={{
+            fontSize: 7,
+            fontWeight: 500,
+            letterSpacing: "0.08em",
+            color: isPlaying ? "#75FF4F" : "var(--muted)",
+            fontFamily: "'Geist Pixel', monospace",
+            textShadow: isPlaying ? "0 0 8px rgba(117, 255, 79, 0.6), 0 0 20px rgba(117, 255, 79, 0.3)" : "none",
+            transition: "color 0.3s ease, text-shadow 0.3s ease",
+          }}
+        >
+          {isPlaying ? "LISTENING NOW" : "LAST LISTEN"}
         </span>
       </div>
 
       {/* Song pill */}
-      <div className="inline-flex items-center justify-center gap-2" style={{ background: "var(--faint)", border: "0.5px solid rgba(0,0,0,0.12)", borderRadius: 999, padding: "5px 10px", height: 30, maxWidth: 240, overflow: "hidden" }}>
-        <img
-          src={track.albumImageUrl}
-          alt={track.album}
-          width={20}
-          height={20}
-          className="shrink-0"
-          style={{ borderRadius: 4 }}
-        />
-        <ScrollingText>
-          <span style={{ color: "var(--track-title)" }}>{track.title}</span>
-          <span className="font-semibold" style={{ color: "var(--track-artist)" }}>{track.artist}</span>
-        </ScrollingText>
+      <div
+        className="inline-flex items-center justify-center gap-2"
+        style={{
+          background: "var(--faint)",
+          border: "0.5px solid rgba(0,0,0,0.12)",
+          borderRadius: 999,
+          padding: "5px 10px",
+          height: 30,
+          maxWidth: "min(240px, 70vw)",
+          overflow: "hidden",
+          opacity: songPillMuted ? 0.5 : 1,
+          transition: "opacity 0.3s ease",
+        }}
+      >
+        {hasTrack && track.albumImageUrl ? (
+          <img
+            src={track.albumImageUrl}
+            alt={track.album || ""}
+            width={20}
+            height={20}
+            className="shrink-0"
+            style={{ borderRadius: 4 }}
+          />
+        ) : (
+          <div
+            className="shrink-0"
+            style={{
+              width: 20,
+              height: 20,
+              borderRadius: 4,
+              background: "rgba(0,0,0,0.06)",
+            }}
+          />
+        )}
+        {hasTrack ? (
+          <ScrollingText>
+            <span style={{ color: "var(--track-title)" }}>{track.title}</span>
+            <span className="font-semibold" style={{ color: "var(--track-artist)" }}>
+              {track.artist}
+            </span>
+          </ScrollingText>
+        ) : (
+          <span
+            style={{
+              fontSize: 11,
+              color: "var(--muted)",
+              whiteSpace: "nowrap",
+            }}
+          >
+            {error ? "Couldn't load playback" : "Nothing playing recently"}
+          </span>
+        )}
       </div>
-    </a>
+    </>
+  );
+
+  const interactive = hasTrack && Boolean(track.songUrl);
+
+  if (interactive) {
+    return (
+      <a
+        href={track.songUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="flex flex-col items-start gap-1.5 no-underline transition-all duration-300 ease-out hover:scale-[1.005]"
+        style={{
+          background: "transparent",
+          border: "none",
+          color: "inherit",
+          fontSize: "14px",
+        }}
+      >
+        {body}
+      </a>
+    );
+  }
+
+  return (
+    <div
+      className="flex flex-col items-start gap-1.5"
+      style={{
+        color: "inherit",
+        fontSize: "14px",
+      }}
+    >
+      {body}
+    </div>
   );
 }
