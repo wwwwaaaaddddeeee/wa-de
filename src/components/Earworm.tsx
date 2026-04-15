@@ -131,7 +131,7 @@ export default function Earworm() {
       href={track.songUrl}
       target="_blank"
       rel="noopener noreferrer"
-      className="flex flex-row items-stretch gap-0 rounded-2xl no-underline transition-all duration-300 ease-out hover:scale-[1.005]"
+      className="flex flex-col items-center gap-2 rounded-2xl no-underline transition-all duration-300 ease-out hover:scale-[1.005]"
       style={{
         background: "transparent",
         border: "none",
@@ -139,52 +139,45 @@ export default function Earworm() {
         fontSize: "14px",
       }}
     >
-      {/* Status line - left side */}
-      <div style={{ display: "flex", alignItems: "center", paddingRight: 10 }}>
-        <span className="inline-flex items-center gap-1.5" style={{
-          transform: "scale(0.85)",
-          transformOrigin: "left center",
-          whiteSpace: "nowrap",
-        }}>
-          <span style={{ display: "inline-flex", alignItems: "center", lineHeight: 0 }}><SpotifyLogo color="#DADADA" /></span>
-          <span style={{
-            fontSize: 10,
-            fontWeight: 500,
-            letterSpacing: "0.08em",
-            color: track.isPlaying ? "#75FF4F" : "#E2E2E2",
-            fontFamily: "'Geist Pixel', monospace",
-            textShadow: track.isPlaying ? "0 0 8px rgba(117, 255, 79, 0.6), 0 0 20px rgba(117, 255, 79, 0.3)" : "none",
-            transition: "color 0.3s ease, text-shadow 0.3s ease",
-          }}>
-            {track.isPlaying ? "LISTENING NOW" : "LAST LISTEN"}
-          </span>
-        </span>
-      </div>
-
       {/* Song info */}
       <div className="inline-flex items-center gap-4" style={{ background: "var(--faint)", borderRadius: 12, padding: "8px 12px" }}>
-      {/* Album art */}
-      <img
-        src={track.albumImageUrl}
-        alt={track.album}
-        width={40}
-        height={40}
-        className="shrink-0"
-        style={{ borderRadius: 6 }}
-      />
-
-      {/* Track info */}
-      <div className="flex flex-col items-start min-w-0 shrink-0">
-        <span className="font-medium truncate" style={{ fontSize: 13, color: "var(--track-title)", maxWidth: 130 }}>
-          {track.title}
-        </span>
-        <span className="truncate" style={{ fontSize: 11, color: "var(--track-artist)", maxWidth: 130 }}>
-          {track.artist}
-        </span>
+        <img
+          src={track.albumImageUrl}
+          alt={track.album}
+          width={40}
+          height={40}
+          className="shrink-0"
+          style={{ borderRadius: 6 }}
+        />
+        <div className="flex flex-col items-start min-w-0 shrink-0">
+          <span className="font-medium truncate" style={{ fontSize: 13, color: "var(--track-title)", maxWidth: 130 }}>
+            {track.title}
+          </span>
+          <span className="truncate" style={{ fontSize: 11, color: "var(--track-artist)", maxWidth: 130 }}>
+            {track.artist}
+          </span>
+        </div>
       </div>
 
-
-      </div>
+      {/* Status label */}
+      <span className="inline-flex items-center gap-1" style={{
+        whiteSpace: "nowrap",
+        transform: "scale(0.8)",
+        transformOrigin: "center",
+      }}>
+        <span style={{ display: "inline-flex", alignItems: "center", lineHeight: 0 }}><SpotifyLogo color="#DADADA" /></span>
+        <span style={{
+          fontSize: 9,
+          fontWeight: 500,
+          letterSpacing: "0.08em",
+          color: track.isPlaying ? "#75FF4F" : "#E2E2E2",
+          fontFamily: "'Geist Pixel', monospace",
+          textShadow: track.isPlaying ? "0 0 8px rgba(117, 255, 79, 0.6), 0 0 20px rgba(117, 255, 79, 0.3)" : "none",
+          transition: "color 0.3s ease, text-shadow 0.3s ease",
+        }}>
+          {track.isPlaying ? "LISTENING NOW" : "LAST LISTEN"}
+        </span>
+      </span>
     </a>
   );
 }
