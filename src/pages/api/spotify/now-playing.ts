@@ -8,17 +8,36 @@ const SPOTIFY_NOW_PLAYING_URL =
 const SPOTIFY_RECENTLY_PLAYED_URL =
   "https://api.spotify.com/v1/me/player/recently-played?limit=50";
 
+/** Prefer non-empty values; Vercel sets `process.env` at runtime, Vite dev injects `.env` into `import.meta.env`. */
+function pickEnv(key: string): string {
+  const fromProcess =
+    typeof process !== "undefined" ? process.env[key]?.trim() : undefined;
+  if (fromProcess) return fromProcess;
+  const fromMeta = (import.meta.env as Record<string, string | undefined>)[key]?.trim();
+  return fromMeta ?? "";
+}
+
+function basicAuthHeader(clientId: string, clientSecret: string): string {
+  const pair = `${clientId}:${clientSecret}`;
+  if (typeof Buffer !== "undefined") {
+    return "Basic " + Buffer.from(pair, "utf8").toString("base64");
+  }
+  return "Basic " + btoa(pair);
+}
+
 async function getAccessToken(): Promise<string> {
-  const clientId = import.meta.env.SPOTIFY_CLIENT_ID;
-  const clientSecret = import.meta.env.SPOTIFY_CLIENT_SECRET;
-  const refreshToken = import.meta.env.SPOTIFY_REFRESH_TOKEN;
+  const clientId = pickEnv("SPOTIFY_CLIENT_ID");
+  const clientSecret = pickEnv("SPOTIFY_CLIENT_SECRET");
+  const refreshToken = pickEnv("SPOTIFY_REFRESH_TOKEN");
+  if (!clientId || !clientSecret || !refreshToken) {
+    throw new Error("missing_spotify_env");
+  }
 
   const res = await fetch(SPOTIFY_TOKEN_URL, {
     method: "POST",
     headers: {
       "Content-Type": "application/x-www-form-urlencoded",
-      Authorization:
-        "Basic " + btoa(`${clientId}:${clientSecret}`),
+      Authorization: basicAuthHeader(clientId, clientSecret),
     },
     body: new URLSearchParams({
       grant_type: "refresh_token",
@@ -26,8 +45,26 @@ async function getAccessToken(): Promise<string> {
     }),
   });
 
-  const data = await res.json();
+  const data = (await res.json()) as {
+    access_token?: string;
+    error?: string;
+    error_description?: string;
+  };
+  if (!res.ok || !data.access_token) {
+    throw new Error(data.error ?? "token_refresh_failed");
+  }
   return data.access_token;
+}
+
+async function spotifyGet(accessToken: string, url: string): Promise<Response> {
+  const headers = { Authorization: `Bearer ${accessToken}` };
+  let res = await fetch(url, { headers });
+  if (res.status === 429) {
+    const sec = parseInt(res.headers.get("Retry-After") ?? "2", 10);
+    await new Promise((r) => setTimeout(r, Math.min(Math.max(sec, 1) * 1000, 8000)));
+    res = await fetch(url, { headers });
+  }
+  return res;
 }
 
 type TrackPayload = {
@@ -127,7 +164,7 @@ function mapRecentlyPlayedEntry(entry: SpotifyRecentEntry): TrackPayload | null 
   return itemToPayload(track, {
     isPlaying: false,
     playedAt: entry.played_at ?? "",
-    progressMs: track.duration_ms ?? 0,
+    progressMs: 0,
   });
 }
 
@@ -152,16 +189,29 @@ async function safeJson(res: Response): Promise<unknown> {
   }
 }
 
+const jsonHeadersOk = {
+  "Content-Type": "application/json",
+  "Cache-Control": "private, max-age=15",
+} as const;
+
+const emptyPayload = {
+  isPlaying: false,
+  title: "",
+  artist: "",
+  album: "",
+  albumImageUrl: "",
+  songUrl: "",
+  playedAt: "",
+  progressMs: 0,
+  durationMs: 0,
+};
+
 export const GET: APIRoute = async () => {
   try {
     const accessToken = await getAccessToken();
-    const headers = { Authorization: `Bearer ${accessToken}` };
 
-    // Fetch both so we always have a "last played" candidate when nothing is live
-    const [nowRes, recentRes] = await Promise.all([
-      fetch(SPOTIFY_NOW_PLAYING_URL, { headers }),
-      fetch(SPOTIFY_RECENTLY_PLAYED_URL, { headers }),
-    ]);
+    // Currently playing first — avoids two parallel calls (helps with Spotify rate limits).
+    const nowRes = await spotifyGet(accessToken, SPOTIFY_NOW_PLAYING_URL);
 
     let nowPayload: TrackPayload | null = null;
     if (nowRes.status === 200) {
@@ -171,67 +221,33 @@ export const GET: APIRoute = async () => {
       }
     }
 
+    if (nowPayload?.isPlaying) {
+      return new Response(JSON.stringify(nowPayload), { headers: jsonHeadersOk });
+    }
+
+    if (nowPayload && !nowPayload.isPlaying) {
+      return new Response(JSON.stringify(nowPayload), { headers: jsonHeadersOk });
+    }
+
+    const recentRes = await spotifyGet(accessToken, SPOTIFY_RECENTLY_PLAYED_URL);
+
     let recentPayload: TrackPayload | null = null;
     if (recentRes.status === 200) {
       const raw = await safeJson(recentRes);
       recentPayload = firstRecentPayload(raw);
     }
 
-    const jsonHeaders = {
-      "Content-Type": "application/json",
-      "Cache-Control": "public, s-maxage=30, stale-while-revalidate=15",
-    } as const;
-
-    if (nowPayload?.isPlaying) {
-      return new Response(JSON.stringify(nowPayload), { headers: jsonHeaders });
-    }
-
-    // Paused / on-device queue: prefer the player item so the pill matches the app
-    if (nowPayload && !nowPayload.isPlaying) {
-      return new Response(JSON.stringify(nowPayload), { headers: jsonHeaders });
-    }
-
     if (recentPayload) {
-      return new Response(JSON.stringify(recentPayload), { headers: jsonHeaders });
+      return new Response(JSON.stringify(recentPayload), { headers: jsonHeadersOk });
     }
 
-    // Nothing found — shape matches track responses so the client can always render
-    return new Response(
-      JSON.stringify({
-        isPlaying: false,
-        title: "",
-        artist: "",
-        album: "",
-        albumImageUrl: "",
-        songUrl: "",
-        playedAt: "",
-        progressMs: 0,
-        durationMs: 0,
-      }),
-      {
-        headers: {
-          "Content-Type": "application/json",
-          "Cache-Control": "public, s-maxage=30, stale-while-revalidate=15",
-        },
-      }
-    );
+    return new Response(JSON.stringify(emptyPayload), {
+      headers: jsonHeadersOk,
+    });
   } catch {
-    return new Response(
-      JSON.stringify({
-        isPlaying: false,
-        title: "",
-        artist: "",
-        album: "",
-        albumImageUrl: "",
-        songUrl: "",
-        playedAt: "",
-        progressMs: 0,
-        durationMs: 0,
-      }),
-      {
-        status: 200,
-        headers: { "Content-Type": "application/json" },
-      }
-    );
+    return new Response(JSON.stringify(emptyPayload), {
+      status: 200,
+      headers: { "Content-Type": "application/json" },
+    });
   }
 };

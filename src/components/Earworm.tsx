@@ -113,7 +113,7 @@ export default function Earworm() {
 
   const fetchTrack = async () => {
     try {
-      const res = await fetch("/api/spotify/now-playing");
+      const res = await fetch("/api/spotify/now-playing", { cache: "no-store" });
       if (!res.ok) throw new Error();
       const data = await res.json();
       setError(false);
@@ -201,7 +201,8 @@ export default function Earworm() {
   const hasTrack = Boolean(track.title?.trim());
   const isPlaying = track.isPlaying && hasTrack;
   const statusMuted = !isPlaying;
-  const songPillMuted = !hasTrack;
+  /** Empty placeholder is dimmest; last listen is muted; live playback is full strength. */
+  const songPillOpacity = !hasTrack ? 0.5 : isPlaying ? 1 : 0.82;
 
   const body = (
     <>
@@ -256,7 +257,7 @@ export default function Earworm() {
           height: 30,
           maxWidth: "min(240px, 70vw)",
           overflow: "hidden",
-          opacity: songPillMuted ? 0.5 : 1,
+          opacity: songPillOpacity,
           transition: "opacity 0.3s ease",
         }}
       >
@@ -267,7 +268,12 @@ export default function Earworm() {
             width={20}
             height={20}
             className="shrink-0"
-            style={{ borderRadius: 4 }}
+            style={{
+              borderRadius: 4,
+              opacity: isPlaying ? 1 : 0.72,
+              filter: isPlaying ? undefined : "grayscale(0.35)",
+              transition: "opacity 0.3s ease, filter 0.3s ease",
+            }}
           />
         ) : (
           <div
@@ -282,8 +288,21 @@ export default function Earworm() {
         )}
         {hasTrack ? (
           <ScrollingText>
-            <span style={{ color: "var(--track-title)" }}>{track.title}</span>
-            <span className="font-semibold" style={{ color: "var(--track-artist)" }}>
+            <span
+              style={{
+                color: isPlaying ? "var(--track-title)" : "var(--muted)",
+                opacity: isPlaying ? 1 : 0.92,
+              }}
+            >
+              {track.title}
+            </span>
+            <span
+              className="font-semibold"
+              style={{
+                color: isPlaying ? "var(--track-artist)" : "var(--muted)",
+                opacity: isPlaying ? 1 : 0.88,
+              }}
+            >
               {track.artist}
             </span>
           </ScrollingText>
