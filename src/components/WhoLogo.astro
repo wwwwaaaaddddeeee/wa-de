@@ -2,9 +2,20 @@
 // who.svg inlined so we can: (a) scale the arrow icon larger and (b) hover-darken via currentColor
 const HEIGHT = 26;
 const ARROW_SCALE = 1.18;
+// "wade" underline spans viewBox x=[413.95, 501.348] in a 538x46 viewBox
+const WADE_CENTER_VB = (413.95 + 501.348) / 2;
+const VB_HEIGHT = 46;
+const wadeCenterPx = (WADE_CENTER_VB / VB_HEIGHT) * HEIGHT;
 ---
 
-<a href="/" class="who-logo block" style={`height: ${HEIGHT}px; color: #DADADA;`} aria-label="who">
+<div class="who-logo-wrap" style={`--wade-center: ${wadeCenterPx}px;`}>
+  <button
+    type="button"
+    class="who-logo"
+    style={`height: ${HEIGHT}px; color: #DADADA;`}
+    aria-label="who"
+    aria-expanded="false"
+  >
   <svg
     viewBox="0 0 538 46"
     fill="none"
@@ -33,13 +44,75 @@ const ARROW_SCALE = 1.18;
       />
     </g>
   </svg>
-</a>
+  </button>
+  <span class="who-tooltip" role="tooltip">Work in progress.</span>
+</div>
 
 <style>
-  .who-logo {
-    transition: color 150ms ease;
+  .who-logo-wrap {
+    position: relative;
+    display: inline-block;
   }
-  .who-logo:hover {
+  .who-logo {
+    background: none;
+    border: 0;
+    padding: 0;
+    margin: 0;
+    cursor: pointer;
+    display: block;
+    transition: color 150ms ease;
+    font: inherit;
+  }
+  .who-logo:hover,
+  .who-logo[aria-expanded="true"] {
     color: #B8B8B8;
   }
+  .who-tooltip {
+    position: absolute;
+    top: calc(100% + 10px);
+    left: var(--wade-center, 50%);
+    transform: translateX(-50%) translateY(-4px);
+    background: #1F1F1F;
+    color: #FFFFFF;
+    font-size: 12px;
+    line-height: 1;
+    padding: 7px 10px;
+    border-radius: 6px;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 150ms ease, transform 150ms ease;
+    z-index: 20;
+  }
+  .who-tooltip::before {
+    content: "";
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 5px solid transparent;
+    border-bottom-color: #1F1F1F;
+  }
+  .who-logo-wrap:hover .who-tooltip,
+  .who-logo[aria-expanded="true"] ~ .who-tooltip {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
 </style>
+
+<script>
+  const wrap = document.querySelector<HTMLElement>(".who-logo-wrap");
+  const btn = wrap?.querySelector<HTMLButtonElement>(".who-logo");
+
+  btn?.addEventListener("click", (e) => {
+    e.stopPropagation();
+    const open = btn.getAttribute("aria-expanded") === "true";
+    btn.setAttribute("aria-expanded", open ? "false" : "true");
+  });
+
+  document.addEventListener("click", (e) => {
+    if (btn && !wrap?.contains(e.target as Node)) {
+      btn.setAttribute("aria-expanded", "false");
+    }
+  });
+</script>
