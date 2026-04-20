@@ -1,3 +1,19 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630">
   <rect width="1200" height="630" fill="#F0F0F0"/>
+  <text
+    x="96"
+    y="280"
+    font-family="sans-serif"
+    font-size="96"
+    font-weight="700"
+    letter-spacing="-3"
+    fill="#000000"
+  >HELLOWADE</text>
+  <text
+    x="96"
+    y="348"
+    font-family="sans-serif"
+    font-size="32"
+    fill="#999999"
+  >Designer living and working in Memphis, TN.</text>
 </svg>
