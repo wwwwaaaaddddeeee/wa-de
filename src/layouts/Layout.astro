@@ -17,6 +17,13 @@ const { title = "HELLOWADE" } = Astro.props;
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="icon" type="image/png" href="/favicon.png" />
     <meta name="description" content="Designer living and working in Memphis, TN." />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content="Designer living and working in Memphis, TN." />
+    <meta property="og:image" content="/og.svg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content="/og.svg" />
     <title>{title}</title>
   </head>
   <body>
