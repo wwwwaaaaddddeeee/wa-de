@@ -1,4 +1,5 @@
 import { Gravity, MatterBody } from "@/components/ui/gravity";
+import { haptic } from "@/lib/haptic/haptic";
 import { useEffect, useState } from "react";
 
 const SCALE_DESKTOP = 5.25;
@@ -24,7 +25,11 @@ export default function GravityDemo() {
 
   return (
     <div className="w-full h-screen relative">
-      <Gravity gravity={{ x: 0, y: 1 }} className="w-full h-full">
+      <Gravity
+        gravity={{ x: 0, y: 1 }}
+        onGrab={() => haptic(10)}
+        className="w-full h-full"
+      >
         {letters.map((l) => {
           const w = Math.round(l.w * scale);
           const h = Math.round(l.h * scale);

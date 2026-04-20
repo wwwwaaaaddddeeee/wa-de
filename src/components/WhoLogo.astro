@@ -12,7 +12,7 @@ const wadeCenterPx = (WADE_CENTER_VB / VB_HEIGHT) * HEIGHT;
   <button
     type="button"
     class="who-logo"
-    style={`height: ${HEIGHT}px; color: #DADADA;`}
+    style={`height: ${HEIGHT}px;`}
     aria-label="who"
     aria-expanded="false"
   >
@@ -62,18 +62,19 @@ const wadeCenterPx = (WADE_CENTER_VB / VB_HEIGHT) * HEIGHT;
     display: block;
     transition: color 150ms ease;
     font: inherit;
+    color: var(--icon-default);
   }
   .who-logo:hover,
   .who-logo[aria-expanded="true"] {
-    color: #B8B8B8;
+    color: var(--icon-hover);
   }
   .who-tooltip {
     position: absolute;
     top: calc(100% + 10px);
     left: var(--wade-center, 50%);
     transform: translateX(-50%) translateY(-4px);
-    background: #1F1F1F;
-    color: #FFFFFF;
+    background: var(--foreground);
+    color: var(--background);
     font-size: 12px;
     line-height: 1;
     padding: 7px 10px;
@@ -91,7 +92,7 @@ const wadeCenterPx = (WADE_CENTER_VB / VB_HEIGHT) * HEIGHT;
     left: 50%;
     transform: translateX(-50%);
     border: 5px solid transparent;
-    border-bottom-color: #1F1F1F;
+    border-bottom-color: var(--foreground);
   }
   .who-logo-wrap:hover .who-tooltip,
   .who-logo[aria-expanded="true"] ~ .who-tooltip {
@@ -101,11 +102,14 @@ const wadeCenterPx = (WADE_CENTER_VB / VB_HEIGHT) * HEIGHT;
 </style>
 
 <script>
+  import { haptic } from "@/lib/haptic/haptic";
+
   const wrap = document.querySelector<HTMLElement>(".who-logo-wrap");
   const btn = wrap?.querySelector<HTMLButtonElement>(".who-logo");
 
   btn?.addEventListener("click", (e) => {
     e.stopPropagation();
+    haptic();
     const open = btn.getAttribute("aria-expanded") === "true";
     btn.setAttribute("aria-expanded", open ? "false" : "true");
   });

@@ -2,13 +2,38 @@
 import Layout from "../layouts/Layout.astro";
 import GravityDemo from "../components/GravityDemo";
 import WhoLogo from "../components/WhoLogo.astro";
+import {
+  LinkedInIcon,
+  XIcon,
+  InstagramIcon,
+  SpotifyIcon,
+  FigmaIcon,
+  GitHubIcon,
+  NpmIcon,
+} from "../components/SocialIcons";
 ---
 
 <Layout>
-  <main class="min-h-screen overflow-hidden relative" style="background: #F9F9F9;">
-    <div class="absolute top-6 left-1/2 -translate-x-1/2 z-10">
+  <main class="min-h-screen overflow-hidden relative" style="background: var(--background);">
+    <div class="absolute top-6 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-3">
       <WhoLogo />
+      <div class="social-row flex flex-wrap items-center justify-center gap-3">
+        <LinkedInIcon client:load />
+        <XIcon client:load />
+        <InstagramIcon client:load />
+        <SpotifyIcon client:load />
+        <FigmaIcon client:load />
+        <GitHubIcon client:load />
+        <NpmIcon client:load />
+      </div>
     </div>
+
+    <style is:global>
+      .social-row svg {
+        width: 30px;
+        height: 30px;
+      }
+    </style>
     <GravityDemo client:only="react" />
   </main>
 </Layout>

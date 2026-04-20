@@ -85,6 +85,7 @@ type GravityProps = {
   grabCursor?: boolean
   addTopWall?: boolean
   autoStart?: boolean
+  onGrab?: () => void
   className?: string
 }
 
@@ -183,6 +184,7 @@ const Gravity = forwardRef<GravityRef, GravityProps>(
       resetOnResize = true,
       addTopWall = true,
       autoStart = true,
+      onGrab,
       className,
       ...props
     },
@@ -320,6 +322,10 @@ const Gravity = forwardRef<GravityRef, GravityProps>(
         },
       })
 
+      if (onGrab) {
+        Events.on(mouseConstraint.current, "startdrag", () => onGrab())
+      }
+
       // Add walls
       const walls = [
         // Floor
@@ -420,7 +426,7 @@ const Gravity = forwardRef<GravityRef, GravityProps>(
         runner.current.enabled = true
         startEngine()
       }
-    }, [updateElements, debug, autoStart])
+    }, [updateElements, debug, autoStart, onGrab])
 
     // Clear the Matter.js world
     const clearRenderer = useCallback(() => {

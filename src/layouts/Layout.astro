@@ -22,7 +22,8 @@ const { title = "HELLOWADE" } = Astro.props;
   <body>
     <style is:inline>
       :root {
-        --background: #ffffff;
+        color-scheme: light dark;
+        --background: #F9F9F9;
         --foreground: #000000;
         --muted: #999999;
         --faint: rgba(218, 218, 218, 0.15);
@@ -33,7 +34,7 @@ const { title = "HELLOWADE" } = Astro.props;
       }
       @media (prefers-color-scheme: dark) {
         :root {
-          --background: #111111;
+          --background: #131313;
           --foreground: #e0e0e0;
           --muted: #888888;
           --faint: rgba(255, 255, 255, 0.08);
