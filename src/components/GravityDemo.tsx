@@ -1,30 +1,54 @@
 import { Gravity, MatterBody } from "@/components/ui/gravity";
+import { useEffect, useState } from "react";
+
+const SCALE_DESKTOP = 4.2;
+const SCALE_MOBILE = 2.8;
+
+const letters = [
+  { src: "/letters/w.svg", w: 59, h: 39, x: "15%", y: "0%", angle: -8 },
+  { src: "/letters/a.svg", w: 38, h: 47, x: "32%", y: "10%", angle: 4 },
+  { src: "/letters/dash.svg", w: 26, h: 22, x: "50%", y: "5%", angle: -2 },
+  { src: "/letters/d.svg", w: 40, h: 56, x: "68%", y: "12%", angle: 6 },
+  { src: "/letters/e.svg", w: 37, h: 45, x: "85%", y: "0%", angle: -5 },
+];
 
 export default function GravityDemo() {
+  const [scale, setScale] = useState(SCALE_DESKTOP);
+
+  useEffect(() => {
+    const update = () => setScale(window.innerWidth < 640 ? SCALE_MOBILE : SCALE_DESKTOP);
+    update();
+    window.addEventListener("resize", update);
+    return () => window.removeEventListener("resize", update);
+  }, []);
+
   return (
     <div className="w-full h-screen relative">
       <Gravity gravity={{ x: 0, y: 1 }} className="w-full h-full">
-        <MatterBody x="20%" y="10%" matterBodyOptions={{ friction: 0.5, restitution: 0.4 }}>
-          <div className="px-6 py-3 rounded-full bg-black text-white text-2xl font-medium">
-            hello
-          </div>
-        </MatterBody>
-        <MatterBody x="50%" y="15%" matterBodyOptions={{ friction: 0.5, restitution: 0.6 }}>
-          <div className="px-6 py-3 rounded-full bg-red-500 text-white text-2xl font-medium">
-            wade
-          </div>
-        </MatterBody>
-        <MatterBody x="75%" y="5%" matterBodyOptions={{ friction: 0.5, restitution: 0.5 }}>
-          <div className="px-6 py-3 rounded-full bg-blue-600 text-white text-2xl font-medium">
-            here
-          </div>
-        </MatterBody>
-        <MatterBody x="35%" y="25%" bodyType="circle" matterBodyOptions={{ friction: 0.3, restitution: 0.8 }}>
-          <div className="w-20 h-20 rounded-full bg-yellow-400" />
-        </MatterBody>
-        <MatterBody x="65%" y="30%" bodyType="circle" matterBodyOptions={{ friction: 0.3, restitution: 0.8 }}>
-          <div className="w-16 h-16 rounded-full bg-green-500" />
-        </MatterBody>
+        {letters.map((l) => {
+          const w = Math.round(l.w * scale);
+          const h = Math.round(l.h * scale);
+          return (
+            <MatterBody
+              key={l.src}
+              x={l.x}
+              y={l.y}
+              angle={l.angle}
+              matterBodyOptions={{ friction: 0.3, restitution: 0.6, density: 0.002 }}
+            >
+              <div style={{ width: `${w}px`, height: `${h}px` }}>
+                <img
+                  src={l.src}
+                  alt=""
+                  width={w}
+                  height={h}
+                  draggable={false}
+                  className="w-full h-full select-none"
+                />
+              </div>
+            </MatterBody>
+          );
+        })}
       </Gravity>
     </div>
   );
