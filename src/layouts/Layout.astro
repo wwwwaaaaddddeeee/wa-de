@@ -1,6 +1,7 @@
 ---
 import Analytics from '@vercel/analytics/astro';
 import SpeedInsights from '@vercel/speed-insights/astro';
+import { Retune } from 'retune';
 
 interface Props {
   title?: string;
@@ -46,6 +47,7 @@ const { title = "HELLOWADE" } = Astro.props;
     <slot />
     <Analytics />
     <SpeedInsights />
+    <Retune client:only="react" />
   </body>
 </html>
 

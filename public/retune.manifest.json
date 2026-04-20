@@ -1,0 +1,31 @@
+{
+  "version": 2,
+  "tokens": {
+    "typography": {
+      "font-mono": {
+        "value": "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, \"Liberation Mono\", \"Courier New\", monospace",
+        "variable": "--font-mono"
+      },
+      "font-weight-normal": {
+        "value": "400",
+        "variable": "--font-weight-normal"
+      },
+      "font-weight-semibold": {
+        "value": "600",
+        "variable": "--font-weight-semibold"
+      }
+    },
+    "colors": {
+      "color-neutral-900": {
+        "value": "oklch(20.5% 0 0)",
+        "variable": "--color-neutral-900"
+      }
+    },
+    "spacing": {
+      "spacing": {
+        "value": ".25rem",
+        "variable": "--spacing"
+      }
+    }
+  }
+}
