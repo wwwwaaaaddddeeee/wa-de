@@ -1,10 +1,14 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import GravityDemo from "../components/GravityDemo";
+import WhoLogo from "../components/WhoLogo.astro";
 ---
 
 <Layout>
-  <main class="min-h-screen overflow-hidden" style="background: #F9F9F9;">
+  <main class="min-h-screen overflow-hidden relative" style="background: #F9F9F9;">
+    <div class="absolute top-6 left-1/2 -translate-x-1/2 z-10">
+      <WhoLogo />
+    </div>
     <GravityDemo client:only="react" />
   </main>
 </Layout>
