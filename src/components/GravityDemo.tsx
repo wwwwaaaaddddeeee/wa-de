@@ -1,8 +1,8 @@
 import { Gravity, MatterBody } from "@/components/ui/gravity";
 import { useEffect, useState } from "react";
 
-const SCALE_DESKTOP = 4.2;
-const SCALE_MOBILE = 2.8;
+const SCALE_DESKTOP = 5.25;
+const SCALE_MOBILE = 3.5;
 
 const letters = [
   { src: "/letters/w.svg", w: 59, h: 39, x: "15%", y: "0%", angle: -8 },
@@ -34,7 +34,12 @@ export default function GravityDemo() {
               x={l.x}
               y={l.y}
               angle={l.angle}
-              matterBodyOptions={{ friction: 0.3, restitution: 0.6, density: 0.002 }}
+              matterBodyOptions={{
+                friction: 0.4,
+                frictionAir: 0.025,
+                restitution: 0.35,
+                density: 0.004,
+              }}
             >
               <div style={{ width: `${w}px`, height: `${h}px` }}>
                 <img
