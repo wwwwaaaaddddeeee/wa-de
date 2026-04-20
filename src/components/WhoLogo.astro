@@ -106,17 +106,27 @@ const wadeCenterPx = (WADE_CENTER_VB / VB_HEIGHT) * HEIGHT;
 
   const wrap = document.querySelector<HTMLElement>(".who-logo-wrap");
   const btn = wrap?.querySelector<HTMLButtonElement>(".who-logo");
+  let dismissTimer: number | undefined;
+  const isTouch = window.matchMedia("(pointer: coarse)").matches;
+
+  const close = () => btn?.setAttribute("aria-expanded", "false");
 
   btn?.addEventListener("click", (e) => {
     e.stopPropagation();
     haptic();
     const open = btn.getAttribute("aria-expanded") === "true";
     btn.setAttribute("aria-expanded", open ? "false" : "true");
+
+    window.clearTimeout(dismissTimer);
+    if (!open && isTouch) {
+      dismissTimer = window.setTimeout(close, 1400);
+    }
   });
 
+  // Desktop: closing on cursor-leave clears any sticky click-open state
+  wrap?.addEventListener("mouseleave", close);
+
   document.addEventListener("click", (e) => {
-    if (btn && !wrap?.contains(e.target as Node)) {
-      btn.setAttribute("aria-expanded", "false");
-    }
+    if (btn && !wrap?.contains(e.target as Node)) close();
   });
 </script>
