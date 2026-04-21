@@ -6,10 +6,10 @@ const SCALE_DESKTOP = 5.25;
 const SCALE_MOBILE = 3.5;
 
 const letters = [
-  { src: "/letters/w.svg", w: 59, h: 39, x: "15%", y: "0%", angle: -8 },
-  { src: "/letters/a.svg", w: 38, h: 47, x: "32%", y: "10%", angle: 4 },
-  { src: "/letters/d.svg", w: 40, h: 56, x: "68%", y: "12%", angle: 6 },
-  { src: "/letters/e.svg", w: 37, h: 45, x: "85%", y: "0%", angle: -5 },
+  { src: "/letters/w.svg", w: 59, h: 39, x: "16%", y: "0%", angle: -8 },
+  { src: "/letters/a.svg", w: 38, h: 47, x: "36%", y: "10%", angle: 4 },
+  { src: "/letters/d.svg", w: 40, h: 56, x: "56%", y: "12%", angle: 6 },
+  { src: "/letters/e.svg", w: 37, h: 45, x: "76%", y: "0%", angle: -5 },
 ];
 
 export default function GravityDemo() {
