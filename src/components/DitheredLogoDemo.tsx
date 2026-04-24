@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { DitheredLogo } from "@/components/ui/dithered-logo/DitheredLogo";
 
-const DESKTOP_SIZE = 520;
-const MOBILE_SIZE = 320;
+const DESKTOP_SIZE = 325;
+const MOBILE_SIZE = 200;
 
 export default function DitheredLogoDemo() {
   const [size, setSize] = useState(DESKTOP_SIZE);
