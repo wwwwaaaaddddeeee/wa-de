@@ -46,10 +46,24 @@ import {
     <div class="wade-sheet" aria-hidden="true">
       <button class="wade-sheet-backdrop" type="button" aria-label="Close"></button>
       <div class="wade-sheet-card" role="dialog" aria-modal="true" aria-labelledby="wade-sheet-title">
-        <div class="wade-sheet-handle" aria-hidden="true"></div>
-        <p id="wade-sheet-title" class="wade-sheet-title">Let's connect</p>
-        <a class="wade-sheet-email" href="mailto:wade@hellowade.dev">wade@hellowade.dev</a>
-        <button class="wade-sheet-copy" type="button">Copy email</button>
+        <button class="wade-sheet-close" type="button" aria-label="Close">
+          <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true">
+            <path d="M3 3L9 9M9 3L3 9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+          </svg>
+        </button>
+        <p id="wade-sheet-title" class="wade-sheet-bio">
+          Hello — a designer living, learning and working in Memphis, TN. Currently building rabit.wtf and other projects.
+        </p>
+        <div class="wade-sheet-socials">
+          <LinkedInIcon client:load />
+          <XIcon client:load />
+          <InstagramIcon client:load />
+          <GitHubIcon client:load />
+        </div>
+        <div class="wade-sheet-email-row">
+          <span class="wade-sheet-email">wade@hellowade.dev</span>
+          <button class="wade-sheet-copy" type="button">Copy</button>
+        </div>
       </div>
     </div>
 
@@ -107,7 +121,7 @@ import {
       .wade-sheet-backdrop {
         position: absolute;
         inset: 0;
-        background: rgba(0, 0, 0, 0.4);
+        background: rgba(0, 0, 0, 0.18);
         border: 0;
         padding: 0;
         cursor: pointer;
@@ -119,60 +133,136 @@ import {
       }
       .wade-sheet-card {
         position: absolute;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: var(--background);
+        top: 50%;
+        left: 50%;
+        width: calc(100% - 32px);
+        max-width: 360px;
+        /* Frosted liquid-glass: translucent base tinted to page bg, blur +
+           saturate to lift color through, soft highlight gradient on top for
+           a specular feel, and inset highlights for the glass edge. */
+        background:
+          linear-gradient(
+            180deg,
+            rgba(255, 255, 255, 0.38),
+            rgba(255, 255, 255, 0) 55%,
+            rgba(255, 255, 255, 0.08)
+          ),
+          color-mix(in srgb, var(--background) 52%, transparent);
+        backdrop-filter: blur(34px) saturate(180%);
+        -webkit-backdrop-filter: blur(34px) saturate(180%);
         color: var(--foreground);
-        border-radius: 18px 18px 0 0;
-        padding: 14px 20px calc(24px + env(safe-area-inset-bottom, 0));
+        border-radius: 24px;
+        padding: 16px 18px 20px;
         display: flex;
         flex-direction: column;
         align-items: stretch;
-        gap: 12px;
-        transform: translateY(100%);
-        transition: transform 260ms cubic-bezier(0.22, 0.61, 0.36, 1);
-        box-shadow: 0 -8px 30px rgba(0, 0, 0, 0.18);
+        gap: 14px;
+        transform: translate(-50%, -50%) scale(0.94);
+        opacity: 0;
+        transition: transform 260ms cubic-bezier(0.22, 1, 0.36, 1),
+                    opacity 200ms ease;
+        box-shadow:
+          0 14px 40px rgba(0, 0, 0, 0.14),
+          0 2px 6px rgba(0, 0, 0, 0.06),
+          inset 0 1px 0 rgba(255, 255, 255, 0.75),
+          inset 0 -1px 0 rgba(0, 0, 0, 0.04),
+          inset 0 0 0 0.5px rgba(255, 255, 255, 0.18);
+      }
+      @media (prefers-color-scheme: dark) {
+        .wade-sheet-card {
+          background:
+            linear-gradient(
+              180deg,
+              rgba(255, 255, 255, 0.1),
+              rgba(255, 255, 255, 0) 55%,
+              rgba(255, 255, 255, 0.02)
+            ),
+            color-mix(in srgb, var(--background) 55%, transparent);
+          box-shadow:
+            0 30px 80px rgba(0, 0, 0, 0.55),
+            0 4px 14px rgba(0, 0, 0, 0.35),
+            inset 0 1px 0 rgba(255, 255, 255, 0.14),
+            inset 0 -1px 0 rgba(0, 0, 0, 0.3),
+            inset 0 0 0 0.5px rgba(255, 255, 255, 0.06);
+        }
       }
       .wade-sheet[aria-hidden="false"] .wade-sheet-card {
-        transform: translateY(0);
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 1;
       }
-      .wade-sheet-handle {
-        width: 36px;
-        height: 4px;
+      .wade-sheet-close {
+        position: absolute;
+        top: 12px;
+        right: 12px;
+        width: 28px;
+        height: 28px;
+        padding: 0;
+        border: 0;
         border-radius: 999px;
-        background: rgba(0, 0, 0, 0.2);
-        margin: 0 auto 6px;
-      }
-      .wade-sheet-title {
-        font-size: 13px;
-        font-weight: 500;
-        margin: 0;
+        background: rgba(0, 0, 0, 0.06);
         color: var(--muted);
-        text-align: center;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: background 150ms ease, color 150ms ease;
+      }
+      .wade-sheet-close:hover {
+        background: rgba(0, 0, 0, 0.1);
+      }
+      .wade-sheet-close:active {
+        opacity: 0.8;
+      }
+      .wade-sheet-bio {
+        margin: 4px 36px 0 4px; /* reserve right space for the close button */
+        font-size: 14px;
+        line-height: 1.5;
+        color: var(--foreground);
+      }
+      .wade-sheet-socials {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 16px;
+        padding: 2px 0 4px;
+      }
+      .wade-sheet-socials svg {
+        width: 22px;
+        height: 22px;
+      }
+      .wade-sheet-email-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        background: rgba(0, 0, 0, 0.05);
+        border-radius: 999px;
+        padding: 5px 5px 5px 14px;
+        height: 40px;
       }
       .wade-sheet-email {
-        font-size: 20px;
-        font-weight: 500;
-        text-align: center;
+        flex: 1;
+        font-size: 13px;
         color: var(--foreground);
-        text-decoration: none;
-        padding: 4px 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
       }
       .wade-sheet-copy {
         font: inherit;
-        font-size: 14px;
+        font-size: 12px;
         font-weight: 500;
-        background: var(--foreground);
-        color: var(--background);
+        background: #000;
+        color: #fff;
         border: 0;
         border-radius: 999px;
-        padding: 12px 18px;
+        height: 30px;
+        padding: 0 14px;
         cursor: pointer;
-        transition: opacity 150ms ease;
+        transition: opacity 150ms ease, transform 150ms ease;
       }
       .wade-sheet-copy:active {
-        opacity: 0.8;
+        transform: scale(0.96);
+        opacity: 0.92;
       }
       @media (hover: hover) {
         .wade-sheet {
@@ -191,8 +281,9 @@ import {
   const tip = document.querySelector<HTMLElement>(".wade-tip");
   const sheet = document.querySelector<HTMLElement>(".wade-sheet");
   const backdrop = sheet?.querySelector<HTMLButtonElement>(".wade-sheet-backdrop");
+  const closeBtn = sheet?.querySelector<HTMLButtonElement>(".wade-sheet-close");
   const copyBtn = sheet?.querySelector<HTMLButtonElement>(".wade-sheet-copy");
-  const emailLink = sheet?.querySelector<HTMLAnchorElement>(".wade-sheet-email");
+  const emailEl = sheet?.querySelector<HTMLElement>(".wade-sheet-email");
 
   const open = () => {
     sheet?.setAttribute("aria-hidden", "false");
@@ -210,7 +301,7 @@ import {
   });
 
   backdrop?.addEventListener("click", close);
-  emailLink?.addEventListener("click", () => setTimeout(close, 200));
+  closeBtn?.addEventListener("click", close);
   document.addEventListener("keydown", (e) => {
     if (e.key === "Escape" && sheet?.getAttribute("aria-hidden") === "false") close();
   });
@@ -223,10 +314,11 @@ import {
       copyBtn.textContent = "Copied!";
       setTimeout(() => { copyBtn.textContent = original; }, 1400);
     } catch {
-      // clipboard denied — fallback: select email text
-      const range = document.createRange();
-      if (emailLink) {
-        range.selectNodeContents(emailLink);
+      // clipboard denied — fallback: select the email text so the user can
+      // long-press → copy manually
+      if (emailEl) {
+        const range = document.createRange();
+        range.selectNodeContents(emailEl);
         const sel = window.getSelection();
         sel?.removeAllRanges();
         sel?.addRange(range);
