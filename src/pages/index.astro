@@ -14,7 +14,7 @@ import {
   <main class="min-h-screen overflow-hidden relative" style="background: var(--background);">
     <div class="absolute inset-x-0 top-0 bottom-[calc(50%+100px)] sm:bottom-[calc(50%+163px)] z-10 flex flex-col items-center pt-6 pointer-events-none">
       <p class="font-normal text-center inline-flex items-center gap-1 pointer-events-auto" style="color: var(--foreground); font-size: 13px;">
-        <span class="wade-tip underline underline-offset-2">wade<span class="wade-tip-label" role="tooltip">wade@hellowade.dev</span></span>
+        <span class="wade-tip underline underline-offset-2">wade</span>
         <svg
           width="14"
           height="14"
@@ -42,23 +42,38 @@ import {
     <div class="wade-sheet" aria-hidden="true">
       <button class="wade-sheet-backdrop" type="button" aria-label="Close"></button>
       <div class="wade-sheet-card" role="dialog" aria-modal="true" aria-labelledby="wade-sheet-title">
+        <div class="wade-sheet-handle" aria-hidden="true"></div>
         <button class="wade-sheet-close" type="button" aria-label="Close">
           <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true">
             <path d="M3 3L9 9M9 3L3 9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
           </svg>
         </button>
-        <p id="wade-sheet-title" class="wade-sheet-bio">
-          Hello — a designer living, learning and working in Memphis, TN. Currently building rabit.wtf and other projects.
-        </p>
-        <div class="wade-sheet-socials">
-          <LinkedInIcon client:load />
-          <XIcon client:load />
-          <InstagramIcon client:load />
-          <GitHubIcon client:load />
+        <div class="wade-sheet-intro">
+          <h3 id="wade-sheet-title" class="wade-sheet-greeting">hello</h3>
+          <p class="wade-sheet-bio">
+            Call me Wade — Designing, learning, and building in Memphis, TN.
+          </p>
+          <p class="wade-sheet-section-heading">Currently working on:</p>
+          <img class="wade-sheet-logo" src="/logos/rabit.svg" alt="rabit.wtf" width="40" height="40" />
         </div>
-        <div class="wade-sheet-email-row">
+        <div class="wade-sheet-bottom">
           <span class="wade-sheet-email">wade@hellowade.dev</span>
-          <button class="wade-sheet-copy" type="button">Copy</button>
+          <button class="wade-sheet-copy" type="button" aria-label="Copy email">
+            <svg class="wade-copy-icon" width="15" height="15" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+              <rect x="7" y="7" width="10" height="10" rx="2" stroke="currentColor" stroke-width="1.5" />
+              <path d="M13 7V5a1 1 0 0 0-1-1H4a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+            <svg class="wade-check-icon" width="15" height="15" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+              <rect x="1" y="1" width="18" height="18" rx="5" fill="#22c55e" />
+              <path d="M6 10.5L9 13.5L14.5 7.5" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+          </button>
+          <div class="wade-sheet-socials">
+            <LinkedInIcon client:load />
+            <XIcon client:load />
+            <InstagramIcon client:load />
+            <GitHubIcon client:load />
+          </div>
         </div>
       </div>
     </div>
@@ -69,39 +84,7 @@ import {
         height: 21.675px;
       }
       .wade-tip {
-        position: relative;
-      }
-      .wade-tip-label {
-        position: absolute;
-        top: calc(100% + 8px);
-        left: 50%;
-        transform: translateX(-50%) translateY(-4px);
-        background: var(--foreground);
-        color: var(--background);
-        font-size: 11px;
-        line-height: 1;
-        padding: 6px 9px;
-        border-radius: 6px;
-        white-space: nowrap;
-        opacity: 0;
-        pointer-events: none;
-        transition: opacity 150ms ease, transform 150ms ease;
-        text-decoration: none;
-      }
-      .wade-tip-label::before {
-        content: "";
-        position: absolute;
-        bottom: 100%;
-        left: 50%;
-        transform: translateX(-50%);
-        border: 4px solid transparent;
-        border-bottom-color: var(--foreground);
-      }
-      @media (hover: hover) {
-        .wade-tip:hover .wade-tip-label {
-          opacity: 1;
-          transform: translateX(-50%) translateY(0);
-        }
+        cursor: pointer;
       }
 
       /* Bottom sheet (mobile only; desktop keeps the tooltip) */
@@ -129,10 +112,12 @@ import {
       }
       .wade-sheet-card {
         position: absolute;
-        top: 50%;
-        left: 50%;
-        width: calc(100% - 32px);
-        max-width: 360px;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        margin: 0 auto;
+        width: 100%;
+        max-width: 520px;
         /* Frosted liquid-glass: translucent base tinted to page bg, blur +
            saturate to lift color through, soft highlight gradient on top for
            a specular feel, and inset highlights for the glass edge. */
@@ -147,22 +132,31 @@ import {
         backdrop-filter: blur(34px) saturate(180%);
         -webkit-backdrop-filter: blur(34px) saturate(180%);
         color: var(--foreground);
-        border-radius: 24px;
-        padding: 16px 18px 20px;
+        border-radius: 20px 20px 0 0;
+        padding: 8px 22px calc(28px + env(safe-area-inset-bottom, 0));
         display: flex;
         flex-direction: column;
         align-items: stretch;
-        gap: 14px;
-        transform: translate(-50%, -50%) scale(0.94);
-        opacity: 0;
-        transition: transform 260ms cubic-bezier(0.22, 1, 0.36, 1),
-                    opacity 200ms ease;
+        gap: 16px;
+        transform: translateY(100%);
+        transition: transform 320ms cubic-bezier(0.22, 1, 0.36, 1);
+        touch-action: none; /* pointer events drive the drag, not native scroll */
         box-shadow:
-          0 14px 40px rgba(0, 0, 0, 0.14),
-          0 2px 6px rgba(0, 0, 0, 0.06),
+          0 -14px 40px rgba(0, 0, 0, 0.14),
+          0 -2px 6px rgba(0, 0, 0, 0.06),
           inset 0 1px 0 rgba(255, 255, 255, 0.75),
-          inset 0 -1px 0 rgba(0, 0, 0, 0.04),
           inset 0 0 0 0.5px rgba(255, 255, 255, 0.18);
+      }
+      .wade-sheet-card.dragging {
+        transition: none;
+      }
+      .wade-sheet-handle {
+        width: 36px;
+        height: 4px;
+        border-radius: 999px;
+        background: rgba(0, 0, 0, 0.18);
+        margin: 0 auto 4px;
+        flex-shrink: 0;
       }
       @media (prefers-color-scheme: dark) {
         .wade-sheet-card {
@@ -175,16 +169,14 @@ import {
             ),
             color-mix(in srgb, var(--background) 55%, transparent);
           box-shadow:
-            0 30px 80px rgba(0, 0, 0, 0.55),
-            0 4px 14px rgba(0, 0, 0, 0.35),
+            0 -20px 60px rgba(0, 0, 0, 0.45),
+            0 -2px 10px rgba(0, 0, 0, 0.25),
             inset 0 1px 0 rgba(255, 255, 255, 0.14),
-            inset 0 -1px 0 rgba(0, 0, 0, 0.3),
             inset 0 0 0 0.5px rgba(255, 255, 255, 0.06);
         }
       }
       .wade-sheet[aria-hidden="false"] .wade-sheet-card {
-        transform: translate(-50%, -50%) scale(1);
-        opacity: 1;
+        transform: translateY(0);
       }
       .wade-sheet-close {
         position: absolute;
@@ -209,61 +201,94 @@ import {
       .wade-sheet-close:active {
         opacity: 0.8;
       }
+      .wade-sheet-intro {
+        margin: 0 36px 0 4px; /* reserve right space for the close button */
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+      }
+      .wade-sheet-greeting {
+        margin: 0;
+        font-family: "Homemade Apple", cursive;
+        font-size: 38px;
+        font-weight: 400;
+        line-height: 1.1;
+        color: var(--foreground);
+      }
       .wade-sheet-bio {
-        margin: 4px 36px 0 4px; /* reserve right space for the close button */
+        margin: 0;
         font-size: 14px;
         line-height: 1.5;
         color: var(--foreground);
       }
-      .wade-sheet-socials {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 16px;
-        padding: 2px 0 4px;
+      .wade-sheet-section-heading {
+        margin: 28px 0 0 0; /* two-line break above — bigger than the default intro gap */
+        font-size: 14px;
+        line-height: 1.5;
+        color: var(--foreground);
       }
-      .wade-sheet-socials svg {
-        width: 22px;
-        height: 22px;
-      }
-      .wade-sheet-email-row {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        background: rgba(0, 0, 0, 0.05);
-        border-radius: 999px;
-        padding: 5px 5px 5px 14px;
+      .wade-sheet-logo {
+        display: block;
+        width: 40px;
         height: 40px;
+        /* Source SVG is painted in light gray for dark bg — invert in light
+           mode so the shape reads on the pale card background. */
+        filter: invert(1);
+      }
+      @media (prefers-color-scheme: dark) {
+        .wade-sheet-logo {
+          filter: none;
+        }
+      }
+      .wade-sheet-bottom {
+        display: flex;
+        align-items: center;
+        gap: 4px;
       }
       .wade-sheet-email {
-        flex: 1;
         font-size: 13px;
         color: var(--foreground);
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
       }
+      .wade-sheet-socials {
+        margin-left: auto;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .wade-sheet-socials svg {
+        width: 18px;
+        height: 18px;
+      }
       .wade-sheet-copy {
-        font: inherit;
-        font-size: 12px;
-        font-weight: 500;
-        background: #000;
-        color: #fff;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 24px;
+        height: 24px;
+        padding: 0;
         border: 0;
-        border-radius: 999px;
-        height: 30px;
-        padding: 0 14px;
+        background: transparent;
+        color: var(--muted);
         cursor: pointer;
-        transition: opacity 150ms ease, transform 150ms ease;
+        transition: color 150ms ease, transform 150ms ease;
+      }
+      .wade-sheet-copy:hover {
+        color: var(--foreground);
       }
       .wade-sheet-copy:active {
-        transform: scale(0.96);
-        opacity: 0.92;
+        transform: scale(0.92);
       }
-      @media (hover: hover) {
-        .wade-sheet {
-          display: none;
-        }
+      .wade-check-icon {
+        display: none;
+      }
+      .wade-sheet-copy[data-copied="true"] .wade-copy-icon {
+        display: none;
+      }
+      .wade-sheet-copy[data-copied="true"] .wade-check-icon {
+        display: inline;
       }
     </style>
     <DitheredLogoDemo client:only="react" />
@@ -272,7 +297,6 @@ import {
 
 <script>
   const EMAIL = "wade@hellowade.dev";
-  const isTouch = window.matchMedia("(hover: none)").matches;
 
   const tip = document.querySelector<HTMLElement>(".wade-tip");
   const sheet = document.querySelector<HTMLElement>(".wade-sheet");
@@ -280,6 +304,7 @@ import {
   const closeBtn = sheet?.querySelector<HTMLButtonElement>(".wade-sheet-close");
   const copyBtn = sheet?.querySelector<HTMLButtonElement>(".wade-sheet-copy");
   const emailEl = sheet?.querySelector<HTMLElement>(".wade-sheet-email");
+  const card = sheet?.querySelector<HTMLElement>(".wade-sheet-card");
 
   const open = () => {
     sheet?.setAttribute("aria-hidden", "false");
@@ -291,7 +316,6 @@ import {
   };
 
   tip?.addEventListener("click", (e) => {
-    if (!isTouch) return;
     e.preventDefault();
     open();
   });
@@ -306,9 +330,12 @@ import {
     if (!copyBtn) return;
     try {
       await navigator.clipboard.writeText(EMAIL);
-      const original = copyBtn.textContent;
-      copyBtn.textContent = "Copied!";
-      setTimeout(() => { copyBtn.textContent = original; }, 1400);
+      copyBtn.setAttribute("data-copied", "true");
+      copyBtn.setAttribute("aria-label", "Copied");
+      setTimeout(() => {
+        copyBtn.removeAttribute("data-copied");
+        copyBtn.setAttribute("aria-label", "Copy email");
+      }, 1400);
     } catch {
       // clipboard denied — fallback: select the email text so the user can
       // long-press → copy manually
@@ -321,4 +348,57 @@ import {
       }
     }
   });
+
+  // Drag-to-close — Vaul-style drawer behavior.
+  // Start drag only from "chrome" areas (handle / empty space), never from
+  // buttons, links, or the email text, so clicks and selection still work.
+  let dragStartY = 0;
+  let dragY = 0;
+  let dragging = false;
+  const CLOSE_THRESHOLD = 120;   // px dragged down before we dismiss
+  const CLOSE_VELOCITY = 0.7;    // px/ms — fast flick-down also dismisses
+  let dragStartTime = 0;
+
+  const isInteractive = (target: EventTarget | null): boolean => {
+    if (!(target instanceof HTMLElement)) return false;
+    return Boolean(target.closest("button, a, input, textarea, [role='button']"));
+  };
+
+  card?.addEventListener("pointerdown", (e) => {
+    if (isInteractive(e.target) || sheet?.getAttribute("aria-hidden") !== "false") return;
+    dragStartY = e.clientY;
+    dragY = 0;
+    dragStartTime = performance.now();
+    dragging = true;
+    card.classList.add("dragging");
+    card.setPointerCapture(e.pointerId);
+  });
+
+  card?.addEventListener("pointermove", (e) => {
+    if (!dragging || !card) return;
+    const delta = e.clientY - dragStartY;
+    // Rubber-band when dragging up (shouldn't open further than the rest state)
+    dragY = delta > 0 ? delta : delta * 0.2;
+    card.style.transform = `translateY(${dragY}px)`;
+  });
+
+  const endDrag = (e: PointerEvent) => {
+    if (!dragging || !card) return;
+    dragging = false;
+    card.classList.remove("dragging");
+    const velocity = dragY / Math.max(1, performance.now() - dragStartTime);
+    if (dragY > CLOSE_THRESHOLD || velocity > CLOSE_VELOCITY) {
+      // Smoothly slide to the closed position from wherever the finger left it,
+      // then reset inline style once the CSS rule takes over.
+      card.style.transform = "translateY(100%)";
+      sheet?.setAttribute("aria-hidden", "true");
+      document.documentElement.style.overflow = "";
+      window.setTimeout(() => { card.style.transform = ""; }, 340);
+    } else {
+      card.style.transform = "";
+    }
+    dragY = 0;
+  };
+  card?.addEventListener("pointerup", endDrag);
+  card?.addEventListener("pointercancel", endDrag);
 </script>
