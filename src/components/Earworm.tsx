@@ -170,7 +170,7 @@ export default function Earworm() {
   if (loading || !track) {
     return (
       <div
-        className="flex flex-col items-start gap-1.5"
+        className="flex flex-col items-center gap-1.5"
         style={{ fontSize: "14px", opacity: 0.7 }}
       >
         <div
@@ -206,46 +206,6 @@ export default function Earworm() {
 
   const body = (
     <>
-      {/* Status pill */}
-      <div
-        className="inline-flex items-center gap-1"
-        style={{
-          background: isPlaying ? "rgba(117, 255, 79, 0.05)" : "transparent",
-          border: isPlaying ? "0.5px solid rgba(117, 255, 79, 0.3)" : "0.5px solid rgba(0,0,0,0.06)",
-          borderRadius: 999,
-          padding: "2px 7px",
-          whiteSpace: "nowrap",
-          transition: "background 0.3s ease, border 0.3s ease, opacity 0.3s ease",
-          opacity: statusMuted ? 0.55 : 1,
-        }}
-      >
-        <span
-          style={{
-            display: "inline-flex",
-            alignItems: "center",
-            lineHeight: 0,
-            transform: "scale(0.7)",
-            transformOrigin: "center",
-            opacity: statusMuted ? 0.5 : 1,
-          }}
-        >
-          <SpotifyLogo color={statusMuted ? "var(--muted)" : "#DADADA"} />
-        </span>
-        <span
-          style={{
-            fontSize: 7,
-            fontWeight: 500,
-            letterSpacing: "0.08em",
-            color: isPlaying ? "#75FF4F" : "var(--muted)",
-            fontFamily: "'Geist Pixel', monospace",
-            textShadow: isPlaying ? "0 0 8px rgba(117, 255, 79, 0.6), 0 0 20px rgba(117, 255, 79, 0.3)" : "none",
-            transition: "color 0.3s ease, text-shadow 0.3s ease",
-          }}
-        >
-          {isPlaying ? "LISTENING NOW" : "LAST LISTEN"}
-        </span>
-      </div>
-
       {/* Song pill */}
       <div
         className="inline-flex items-center justify-center gap-2"
@@ -318,6 +278,46 @@ export default function Earworm() {
           </span>
         )}
       </div>
+
+      {/* Status pill */}
+      <div
+        className="inline-flex items-center gap-1"
+        style={{
+          background: isPlaying ? "rgba(117, 255, 79, 0.05)" : "transparent",
+          border: isPlaying ? "0.5px solid rgba(117, 255, 79, 0.3)" : "0.5px solid rgba(0,0,0,0.06)",
+          borderRadius: 999,
+          padding: "2px 7px",
+          whiteSpace: "nowrap",
+          transition: "background 0.3s ease, border 0.3s ease, opacity 0.3s ease",
+          opacity: statusMuted ? 0.55 : 1,
+        }}
+      >
+        <span
+          style={{
+            display: "inline-flex",
+            alignItems: "center",
+            lineHeight: 0,
+            transform: "scale(0.7)",
+            transformOrigin: "center",
+            opacity: statusMuted ? 0.5 : 1,
+          }}
+        >
+          <SpotifyLogo color={statusMuted ? "var(--muted)" : "#DADADA"} />
+        </span>
+        <span
+          style={{
+            fontSize: 7,
+            fontWeight: 500,
+            letterSpacing: "0.08em",
+            color: isPlaying ? "#75FF4F" : "var(--muted)",
+            fontFamily: "'Geist Pixel', monospace",
+            textShadow: isPlaying ? "0 0 8px rgba(117, 255, 79, 0.6), 0 0 20px rgba(117, 255, 79, 0.3)" : "none",
+            transition: "color 0.3s ease, text-shadow 0.3s ease",
+          }}
+        >
+          {isPlaying ? "LISTENING NOW" : "LAST LISTEN"}
+        </span>
+      </div>
     </>
   );
 
@@ -329,7 +329,7 @@ export default function Earworm() {
         href={track.songUrl}
         target="_blank"
         rel="noopener noreferrer"
-        className="flex flex-col items-start gap-1.5 no-underline transition-all duration-300 ease-out hover:scale-[1.005]"
+        className="flex flex-col items-center gap-1.5 no-underline transition-all duration-300 ease-out hover:scale-[1.005]"
         style={{
           background: "transparent",
           border: "none",
@@ -344,7 +344,7 @@ export default function Earworm() {
 
   return (
     <div
-      className="flex flex-col items-start gap-1.5"
+      className="flex flex-col items-center gap-1.5"
       style={{
         color: "inherit",
         fontSize: "14px",
