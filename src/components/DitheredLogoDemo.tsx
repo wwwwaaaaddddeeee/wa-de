@@ -16,7 +16,14 @@ export default function DitheredLogoDemo() {
 
   return (
     <div className="w-full h-screen flex items-center justify-center">
-      <DitheredLogo size={size} scale={0.9} invert />
+      <DitheredLogo
+        size={size}
+        scale={0.9}
+        invert
+        color={[255, 40, 60]}
+        midColor={[40, 210, 90]}
+        accentColor={[40, 110, 255]}
+      />
     </div>
   );
 }

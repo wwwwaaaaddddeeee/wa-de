@@ -13,8 +13,48 @@ function resolveGrid(override?: number): number {
   return window.innerWidth <= MOBILE_MAX_WIDTH ? GRID_MOBILE : GRID_DESKTOP;
 }
 const BR_STEPS = 20;                       // brightness quantization divisor (21 steps: 0..20)
-const TINT_STEPS = 6;                      // tint buckets
-const BUCKETS = (BR_STEPS + 1) * TINT_STEPS; // 126
+const TINT_STEPS = 24;                     // tint buckets — higher = smoother color sweep
+const BUCKETS = (BR_STEPS + 1) * TINT_STEPS; // 504
+
+function rgbToHsl([r, g, b]: [number, number, number]): [number, number, number] {
+  const rn = r / 255, gn = g / 255, bn = b / 255;
+  const max = Math.max(rn, gn, bn), min = Math.min(rn, gn, bn);
+  const l = (max + min) / 2;
+  if (max === min) return [0, 0, l];
+  const d = max - min;
+  const s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+  let h = 0;
+  if (max === rn) h = (gn - bn) / d + (gn < bn ? 6 : 0);
+  else if (max === gn) h = (bn - rn) / d + 2;
+  else h = (rn - gn) / d + 4;
+  return [h / 6, s, l];
+}
+
+function hslToRgb([h, s, l]: [number, number, number]): [number, number, number] {
+  if (s === 0) { const v = Math.round(l * 255); return [v, v, v]; }
+  const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+  const p = 2 * l - q;
+  const f = (t: number) => {
+    if (t < 0) t += 1;
+    if (t > 1) t -= 1;
+    if (t < 1 / 6) return p + (q - p) * 6 * t;
+    if (t < 1 / 2) return q;
+    if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
+    return p;
+  };
+  return [
+    Math.round(f(h + 1 / 3) * 255),
+    Math.round(f(h) * 255),
+    Math.round(f(h - 1 / 3) * 255),
+  ];
+}
+
+function lerpHue(a: number, b: number, t: number): number {
+  let d = b - a;
+  if (d > 0.5) d -= 1;
+  if (d < -0.5) d += 1;
+  return (a + d * t + 1) % 1;
+}
 
 // Ordered 8x8 Bayer matrix, normalized to 0..1.
 const BAYER_8 = new Float32Array([
@@ -69,6 +109,8 @@ export type DitheredLogoProps = {
   color?: [number, number, number];
   /** Optional secondary RGB dot color for tint blending. */
   accentColor?: [number, number, number];
+  /** Optional middle RGB color stop for a 3-stop color → mid → accent blend. */
+  midColor?: [number, number, number];
   /** Direction of the dithered gradient fade. Defaults to "diagonal". */
   gradient?: GradientDirection;
   /** How sharp the dither threshold is (1 = full dither, 0 = smooth alpha). Defaults to 0.85. */
@@ -101,6 +143,7 @@ type State = {
   brightness: Float32Array;
   size: Float32Array;
   tint: Float32Array;
+  tintBayer: Float32Array;
   displaceX: Float32Array;
   displaceY: Float32Array;
   buckets: { indices: Int32Array[]; lengths: Int32Array };
@@ -169,6 +212,7 @@ function makeState(canvas: HTMLCanvasElement, shape: Point[], cfg: GeomCfg, grid
   const brightness = new Float32Array(count);
   const size = new Float32Array(count);
   const tint = new Float32Array(count);
+  const tintBayer = new Float32Array(count);
 
   const sharp = Math.max(0, Math.min(1, cfg.gradientSharpness));
   const floor = Math.max(0, Math.min(1, cfg.gradientFloor));
@@ -179,8 +223,13 @@ function makeState(canvas: HTMLCanvasElement, shape: Point[], cfg: GeomCfg, grid
     size[i] = dotPitch * cfg.dotScale;
     tint[i] = px / (grid - 1);
 
-    const g = gradientValue(cfg.gradient, px, py, grid);
     const threshold = BAYER_8[(py & 7) * 8 + (px & 7)];
+    // Offset Bayer pattern on tint axis so its dither mask decorrelates from
+    // the brightness-axis mask — otherwise the two patterns align and produce
+    // visible stripes instead of breaking up the color bands.
+    tintBayer[i] = BAYER_8[((py + 3) & 7) * 8 + ((px + 5) & 7)];
+
+    const g = gradientValue(cfg.gradient, px, py, grid);
     // Mix smooth alpha (sharp=0) with dithered step (sharp=1).
     const dithered = g > threshold ? 1 : 0;
     const mixed = g * (1 - sharp) + dithered * sharp;
@@ -196,7 +245,7 @@ function makeState(canvas: HTMLCanvasElement, shape: Point[], cfg: GeomCfg, grid
     baseX, baseY,
     renderX: new Float32Array(baseX),
     renderY: new Float32Array(baseY),
-    brightness, size, tint,
+    brightness, size, tint, tintBayer,
     displaceX: new Float32Array(count),
     displaceY: new Float32Array(count),
     buckets: { indices, lengths: new Int32Array(BUCKETS) },
@@ -211,30 +260,58 @@ function makeState(canvas: HTMLCanvasElement, shape: Point[], cfg: GeomCfg, grid
 function renderFrame(
   s: State,
   color: [number, number, number],
-  accentColor: [number, number, number]
+  accentColor: [number, number, number],
+  midColor: [number, number, number] | null
 ) {
-  const { ctx, renderX, renderY, brightness, size, tint, count, buckets, w, h } = s;
+  const { ctx, renderX, renderY, brightness, size, tint, tintBayer, count, buckets, w, h } = s;
   ctx.clearRect(0, 0, w, h);
 
   buckets.lengths.fill(0);
+  const maxTint = TINT_STEPS - 1;
   for (let i = 0; i < count; i++) {
     const br = brightness[i];
     if (br < 0.01) continue;
-    const bucket =
-      TINT_STEPS * Math.round(br * BR_STEPS) +
-      Math.round(tint[i] * (TINT_STEPS - 1));
+    // Bayer-dither the tint between its two neighboring buckets so bucket
+    // borders become a stippled transition instead of a hard line.
+    const tf = tint[i] * maxTint;
+    const ti = tf | 0;
+    const frac = tf - ti;
+    const tIdx = frac > tintBayer[i] && ti < maxTint ? ti + 1 : ti;
+    const bucket = TINT_STEPS * Math.round(br * BR_STEPS) + tIdx;
     const idx = buckets.lengths[bucket]++;
     buckets.indices[bucket][idx] = i;
+  }
+
+  // Precompute RGB for each tint step. With midColor we interpolate in HSL
+  // space (hue/sat/light) for a perceptually natural rainbow instead of a
+  // muddy linear-RGB blend.
+  const tintColors: [number, number, number][] = new Array(TINT_STEPS);
+  const ha = midColor ? rgbToHsl(color) : null;
+  const hm = midColor ? rgbToHsl(midColor) : null;
+  const hb = midColor ? rgbToHsl(accentColor) : null;
+  for (let k = 0; k < TINT_STEPS; k++) {
+    const t = k / (TINT_STEPS - 1);
+    if (ha && hm && hb) {
+      const [a, c, u] = t < 0.5 ? [ha, hm, t * 2] : [hm, hb, (t - 0.5) * 2];
+      tintColors[k] = hslToRgb([
+        lerpHue(a[0], c[0], u),
+        a[1] + (c[1] - a[1]) * u,
+        a[2] + (c[2] - a[2]) * u,
+      ]);
+    } else {
+      tintColors[k] = [
+        Math.round(color[0] + (accentColor[0] - color[0]) * t),
+        Math.round(color[1] + (accentColor[1] - color[1]) * t),
+        Math.round(color[2] + (accentColor[2] - color[2]) * t),
+      ];
+    }
   }
 
   for (let bi = 0; bi < BUCKETS; bi++) {
     const len = buckets.lengths[bi];
     if (len === 0) continue;
     const alpha = Math.floor(bi / TINT_STEPS) / BR_STEPS;
-    const t = (bi % TINT_STEPS) / (TINT_STEPS - 1);
-    const r = Math.round(color[0] + (accentColor[0] - color[0]) * t);
-    const g = Math.round(color[1] + (accentColor[1] - color[1]) * t);
-    const b = Math.round(color[2] + (accentColor[2] - color[2]) * t);
+    const [r, g, b] = tintColors[bi % TINT_STEPS];
     const idxs = buckets.indices[bi];
     ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${alpha})`;
     // Batch all rects for this color into one Path2D → one fill call.
@@ -263,6 +340,7 @@ export function DitheredLogo({
   outlineColor = "#ff00aa",
   color,
   accentColor,
+  midColor,
   gradient = "diagonal",
   gradientSharpness = 0.85,
   gradientFloor = 0.12,
@@ -370,7 +448,7 @@ export function DitheredLogo({
 
       const baseColor: [number, number, number] = color ?? (invert ? [0, 0, 0] : [138, 143, 152]);
       const blendColor: [number, number, number] = accentColor ?? baseColor;
-      renderFrame(s, baseColor, blendColor);
+      renderFrame(s, baseColor, blendColor, midColor ?? null);
 
       if (!s.firstRender) {
         s.firstRender = true;
@@ -425,7 +503,7 @@ export function DitheredLogo({
       canvas.removeEventListener("pointerup", onUp);
       window.removeEventListener("resize", onResize);
     };
-  }, [cfg, rasterize, invert, color, accentColor, shockwaveDuration, shockwaveSpeed, shockwaveStrength, shockwaveWidth, gridProp]);
+  }, [cfg, rasterize, invert, color, accentColor, midColor, shockwaveDuration, shockwaveSpeed, shockwaveStrength, shockwaveWidth, gridProp]);
 
   const overlay = useMemo(() => {
     if (!outline) return null;
