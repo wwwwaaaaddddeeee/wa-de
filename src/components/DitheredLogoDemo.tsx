@@ -15,7 +15,7 @@ export default function DitheredLogoDemo() {
   }, []);
 
   return (
-    <div className="w-full h-screen flex items-center justify-center sm:pt-40">
+    <div className="w-full h-screen flex items-center justify-center">
       <DitheredLogo
         size={size}
         scale={0.9}

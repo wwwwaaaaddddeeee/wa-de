@@ -12,9 +12,9 @@ import {
 
 <Layout>
   <main class="min-h-screen overflow-hidden relative" style="background: var(--background);">
-    <div class="absolute top-6 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-6">
-      <p class="font-normal text-center inline-flex items-center gap-1" style="color: var(--foreground); font-size: 13px;">
-        Designer, Memphis, TN,&nbsp;<span class="wade-tip underline underline-offset-2">wade<span class="wade-tip-label" role="tooltip">wade@hellowade.dev</span></span>
+    <div class="absolute inset-x-0 top-0 bottom-[calc(50%+100px)] sm:bottom-[calc(50%+163px)] z-10 flex flex-col items-center pt-6 pointer-events-none">
+      <p class="font-normal text-center inline-flex items-center gap-1 pointer-events-auto" style="color: var(--foreground); font-size: 13px;">
+        <span class="wade-tip underline underline-offset-2">wade<span class="wade-tip-label" role="tooltip">wade@hellowade.dev</span></span>
         <svg
           width="14"
           height="14"
@@ -34,13 +34,9 @@ import {
           />
         </svg>
       </p>
-      <div class="social-row flex flex-wrap items-center justify-center gap-3">
-        <LinkedInIcon client:load />
-        <XIcon client:load />
-        <InstagramIcon client:load />
-        <GitHubIcon client:load />
+      <div class="flex-1 flex items-center justify-center pointer-events-auto">
+        <Earworm client:load />
       </div>
-      <Earworm client:load />
     </div>
 
     <div class="wade-sheet" aria-hidden="true">
