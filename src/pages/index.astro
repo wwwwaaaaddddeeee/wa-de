@@ -1,7 +1,6 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import DitheredLogoDemo from "../components/DitheredLogoDemo";
-import WhoLogo from "../components/WhoLogo.astro";
 import Earworm from "../components/Earworm";
 import {
   LinkedInIcon,
@@ -14,7 +13,27 @@ import {
 <Layout>
   <main class="min-h-screen overflow-hidden relative" style="background: var(--background);">
     <div class="absolute top-6 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-6">
-      <WhoLogo />
+      <p class="font-normal text-sm text-center inline-flex items-center gap-1" style="color: var(--foreground);">
+        Designer, Memphis, TN,&nbsp;<span class="underline underline-offset-2">wade</span>
+        <svg
+          width="14"
+          height="14"
+          viewBox="0 0 24 24"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+          aria-hidden="true"
+          style="flex-shrink: 0;"
+        >
+          <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8" />
+          <path
+            d="M15 9L9 15M15 13V9H11"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </svg>
+      </p>
       <div class="social-row flex flex-wrap items-center justify-center gap-3">
         <LinkedInIcon client:load />
         <XIcon client:load />
