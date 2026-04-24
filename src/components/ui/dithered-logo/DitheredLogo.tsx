@@ -111,6 +111,25 @@ export type DitheredLogoProps = {
   accentColor?: [number, number, number];
   /** Optional middle RGB color stop for a 3-stop color → mid → accent blend. */
   midColor?: [number, number, number];
+  /**
+   * Conic HSL gradient. When set, tint is the polar angle around (cx, cy) and
+   * each dot's color is `hsl(tint * 360 + offset*360, s, l)` — full hue wheel.
+   * Overrides color / midColor / accentColor.
+   */
+  colorWheel?: {
+    /** Center x in 0..1 of the shape grid. Defaults to 0.5. */
+    cx?: number;
+    /** Center y in 0..1 of the shape grid. Defaults to 0.5. */
+    cy?: number;
+    /** Hue offset 0..1. Sets which hue is at angle 0 (east). Defaults to 0. */
+    offset?: number;
+    /** Saturation 0..1. Defaults to 0.55. */
+    s?: number;
+    /** Lightness 0..1. Defaults to 0.68. */
+    l?: number;
+    /** Sweep direction. Defaults to counter-clockwise in screen space. */
+    clockwise?: boolean;
+  };
   /** Direction of the dithered gradient fade. Defaults to "diagonal". */
   gradient?: GradientDirection;
   /** How sharp the dither threshold is (1 = full dither, 0 = smooth alpha). Defaults to 0.85. */
@@ -187,6 +206,7 @@ type GeomCfg = {
   gradient: GradientDirection;
   gradientSharpness: number;
   gradientFloor: number;
+  colorWheel: DitheredLogoProps["colorWheel"] | null;
 };
 
 function makeState(canvas: HTMLCanvasElement, shape: Point[], cfg: GeomCfg, grid: number): State {
@@ -216,12 +236,24 @@ function makeState(canvas: HTMLCanvasElement, shape: Point[], cfg: GeomCfg, grid
 
   const sharp = Math.max(0, Math.min(1, cfg.gradientSharpness));
   const floor = Math.max(0, Math.min(1, cfg.gradientFloor));
+  const wheel = cfg.colorWheel;
+  const wheelCx = wheel ? (wheel.cx ?? 0.5) * (grid - 1) : 0;
+  const wheelCy = wheel ? (wheel.cy ?? 0.5) * (grid - 1) : 0;
+  const wheelSign = wheel?.clockwise ? 1 : -1;
+  const TWO_PI = Math.PI * 2;
   for (let i = 0; i < count; i++) {
     const px = pts[i][0], py = pts[i][1];
     baseX[i] = offX + px * dotPitch;
     baseY[i] = offY + py * dotPitch;
     size[i] = dotPitch * cfg.dotScale;
-    tint[i] = px / (grid - 1);
+    if (wheel) {
+      // Polar angle around (wheelCx, wheelCy). Screen +y is down, so negate dy
+      // when we want counter-clockwise sweep to match the math convention.
+      const a = Math.atan2(wheelSign * (py - wheelCy), px - wheelCx);
+      tint[i] = (a / TWO_PI + 1) % 1;
+    } else {
+      tint[i] = px / (grid - 1);
+    }
 
     const threshold = BAYER_8[(py & 7) * 8 + (px & 7)];
     // Offset Bayer pattern on tint axis so its dither mask decorrelates from
@@ -261,7 +293,8 @@ function renderFrame(
   s: State,
   color: [number, number, number],
   accentColor: [number, number, number],
-  midColor: [number, number, number] | null
+  midColor: [number, number, number] | null,
+  wheelHSL: { offset: number; s: number; l: number } | null
 ) {
   const { ctx, renderX, renderY, brightness, size, tint, tintBayer, count, buckets, w, h } = s;
   ctx.clearRect(0, 0, w, h);
@@ -284,14 +317,16 @@ function renderFrame(
 
   // Precompute RGB for each tint step. With midColor we interpolate in HSL
   // space (hue/sat/light) for a perceptually natural rainbow instead of a
-  // muddy linear-RGB blend.
+  // muddy linear-RGB blend. With wheelHSL we sweep a full hue wheel.
   const tintColors: [number, number, number][] = new Array(TINT_STEPS);
   const ha = midColor ? rgbToHsl(color) : null;
   const hm = midColor ? rgbToHsl(midColor) : null;
   const hb = midColor ? rgbToHsl(accentColor) : null;
   for (let k = 0; k < TINT_STEPS; k++) {
     const t = k / (TINT_STEPS - 1);
-    if (ha && hm && hb) {
+    if (wheelHSL) {
+      tintColors[k] = hslToRgb([(t + wheelHSL.offset + 1) % 1, wheelHSL.s, wheelHSL.l]);
+    } else if (ha && hm && hb) {
       const [a, c, u] = t < 0.5 ? [ha, hm, t * 2] : [hm, hb, (t - 0.5) * 2];
       tintColors[k] = hslToRgb([
         lerpHue(a[0], c[0], u),
@@ -341,6 +376,7 @@ export function DitheredLogo({
   color,
   accentColor,
   midColor,
+  colorWheel,
   gradient = "diagonal",
   gradientSharpness = 0.85,
   gradientFloor = 0.12,
@@ -371,10 +407,12 @@ export function DitheredLogo({
       rasterize, size: canvasSize, scale, dotScale, invert,
       gradient, gradientSharpness, gradientFloor,
       shockwaveSpeed, shockwaveWidth, shockwaveStrength, shockwaveDuration,
+      colorWheel: colorWheel ?? null,
     }),
     [rasterize, canvasSize, scale, dotScale, invert,
      gradient, gradientSharpness, gradientFloor,
-     shockwaveSpeed, shockwaveWidth, shockwaveStrength, shockwaveDuration]
+     shockwaveSpeed, shockwaveWidth, shockwaveStrength, shockwaveDuration,
+     colorWheel]
   );
 
   useEffect(() => {
@@ -448,7 +486,10 @@ export function DitheredLogo({
 
       const baseColor: [number, number, number] = color ?? (invert ? [0, 0, 0] : [138, 143, 152]);
       const blendColor: [number, number, number] = accentColor ?? baseColor;
-      renderFrame(s, baseColor, blendColor, midColor ?? null);
+      const wheelHSL = colorWheel
+        ? { offset: colorWheel.offset ?? 0, s: colorWheel.s ?? 0.55, l: colorWheel.l ?? 0.68 }
+        : null;
+      renderFrame(s, baseColor, blendColor, midColor ?? null, wheelHSL);
 
       if (!s.firstRender) {
         s.firstRender = true;
@@ -503,7 +544,7 @@ export function DitheredLogo({
       canvas.removeEventListener("pointerup", onUp);
       window.removeEventListener("resize", onResize);
     };
-  }, [cfg, rasterize, invert, color, accentColor, midColor, shockwaveDuration, shockwaveSpeed, shockwaveStrength, shockwaveWidth, gridProp]);
+  }, [cfg, rasterize, invert, color, accentColor, midColor, colorWheel, shockwaveDuration, shockwaveSpeed, shockwaveStrength, shockwaveWidth, gridProp]);
 
   const overlay = useMemo(() => {
     if (!outline) return null;

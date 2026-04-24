@@ -20,9 +20,7 @@ export default function DitheredLogoDemo() {
         size={size}
         scale={0.9}
         invert
-        color={[255, 40, 60]}
-        midColor={[40, 210, 90]}
-        accentColor={[40, 110, 255]}
+        colorWheel={{ cx: 0.5, cy: 0.5, offset: 0.6, s: 0.85, l: 0.6 }}
       />
     </div>
   );
