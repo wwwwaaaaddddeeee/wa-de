@@ -105,58 +105,83 @@ function ScrollingText({ children }: { children: React.ReactNode }) {
   );
 }
 
+const STORAGE_KEY = "earworm:last-track";
+const EMPTY_TRACK: SpotifyTrack = {
+  isPlaying: false,
+  title: "",
+  artist: "",
+  album: "",
+  albumImageUrl: "",
+  songUrl: "",
+  playedAt: "",
+  progressMs: 0,
+  durationMs: 0,
+};
+
+/** Read the cached track, scrubbing stale live-playback flags so it always shows as "last listen". */
+function readCachedTrack(): SpotifyTrack | null {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw) as SpotifyTrack;
+    if (!parsed?.title) return null;
+    return { ...parsed, isPlaying: false, progressMs: 0 };
+  } catch {
+    return null;
+  }
+}
+
+function writeCachedTrack(track: SpotifyTrack) {
+  try {
+    localStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify({ ...track, isPlaying: false, progressMs: 0 })
+    );
+  } catch {
+    // private mode / quota — ignore
+  }
+}
+
 export default function Earworm() {
   const [track, setTrack] = useState<SpotifyTrack | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [localProgress, setLocalProgress] = useState(0);
 
-  const fetchTrack = async () => {
+  const fetchTrack = useCallback(async () => {
     try {
       const res = await fetch("/api/spotify/now-playing", { cache: "no-store" });
       if (!res.ok) throw new Error();
-      const data = await res.json();
+      const data = (await res.json()) as SpotifyTrack;
       setError(false);
       if (data.title) {
         setTrack(data);
         setLocalProgress(data.progressMs ?? 0);
+        writeCachedTrack(data);
       } else {
-        setTrack({
-          isPlaying: false,
-          title: "",
-          artist: "",
-          album: "",
-          albumImageUrl: "",
-          songUrl: "",
-          playedAt: "",
-          progressMs: 0,
-          durationMs: 0,
-        });
+        // API returned empty — keep whatever we already had so the widget
+        // doesn't blank on a transient Spotify gap.
+        setTrack((prev) => (prev && prev.title ? prev : EMPTY_TRACK));
       }
     } catch {
       setError(true);
-      setTrack({
-        isPlaying: false,
-        title: "",
-        artist: "",
-        album: "",
-        albumImageUrl: "",
-        songUrl: "",
-        playedAt: "",
-        progressMs: 0,
-        durationMs: 0,
-      });
+      setTrack((prev) => (prev && prev.title ? prev : EMPTY_TRACK));
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
-  // Poll API
+  // Hydrate from localStorage, then poll the API.
   useEffect(() => {
+    const cached = readCachedTrack();
+    if (cached) {
+      setTrack(cached);
+      setLoading(false);
+    }
     fetchTrack();
     const interval = setInterval(fetchTrack, 10_000);
     return () => clearInterval(interval);
-  }, []);
+  }, [fetchTrack]);
 
   // Tick local progress every second when playing
   useEffect(() => {

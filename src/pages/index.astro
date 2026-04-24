@@ -13,17 +13,15 @@ import {
 
 <Layout>
   <main class="min-h-screen overflow-hidden relative" style="background: var(--background);">
-    <div class="absolute top-6 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-3">
+    <div class="absolute top-6 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-6">
       <WhoLogo />
-      <div class="flex flex-wrap items-center justify-center gap-4">
-        <div class="social-row flex flex-wrap items-center justify-center gap-3">
-          <LinkedInIcon client:load />
-          <XIcon client:load />
-          <InstagramIcon client:load />
-          <GitHubIcon client:load />
-        </div>
-        <Earworm client:load />
+      <div class="social-row flex flex-wrap items-center justify-center gap-3">
+        <LinkedInIcon client:load />
+        <XIcon client:load />
+        <InstagramIcon client:load />
+        <GitHubIcon client:load />
       </div>
+      <Earworm client:load />
     </div>
 
     <style is:global>
