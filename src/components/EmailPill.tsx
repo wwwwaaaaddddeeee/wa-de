@@ -17,7 +17,7 @@ export function EmailPill({ email }: { email: string }) {
     <button
       type="button"
       onClick={onClick}
-      className="group inline-flex items-center gap-1.5 rounded-md bg-[#e8e8e8] px-2.5 py-1.5 text-[12px] text-[#666] transition-colors hover:bg-[#dcdcdc] active:bg-[#d0d0d0]"
+      className="group inline-flex items-center gap-1.5 rounded-md bg-[#e8e8e8] px-2.5 py-1.5 text-[12px] text-[#666] transition-colors hover:bg-[#dcdcdc] active:bg-[#d0d0d0] dark:bg-[#222] dark:text-[#a0a0a0] dark:hover:bg-[#2e2e2e] dark:active:bg-[#3a3a3a]"
       aria-label={`Copy ${email}`}
     >
       <CopyIcon />

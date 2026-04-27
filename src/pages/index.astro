@@ -10,10 +10,14 @@ import { getCachedContributions, type Contributions } from '@/lib/get-cached-con
 
 const GITHUB_USERNAME = 'wwwwaaaaddddeeee'
 const GITHUB_PROFILE_URL = 'https://github.com/wwwwaaaaddddeeee'
+const YEAR = new Date().getFullYear()
+const SINCE = `${YEAR}-01-01`
+const UNTIL = `${YEAR}-12-31`
+const WEEKDAYS = [1, 2, 3, 4, 5]
 
 let contributions: Contributions | null = null
 try {
-  contributions = await getCachedContributions(GITHUB_USERNAME)
+  contributions = await getCachedContributions(GITHUB_USERNAME, { since: SINCE, until: UNTIL })
 } catch {
   contributions = null
 }
@@ -21,22 +25,22 @@ try {
 const socials = [
   { label: 'GitHub', href: 'https://github.com/', icon: 'github' as const },
   { label: 'LinkedIn', href: 'https://linkedin.com/', icon: 'linkedin' as const },
-  { label: 'X', href: 'https://x.com/', icon: 'x' as const },
+  { label: 'x / Twitter', href: 'https://x.com/', icon: 'x' as const },
   { label: 'Instagram', href: 'https://instagram.com/', icon: 'instagram' as const, muted: true },
 ]
 ---
 
 <Layout title="Wade — Designer in Memphis">
-  <main class="min-h-screen w-full bg-white text-[#1a1a1a]">
+  <main class="min-h-screen w-full bg-white text-[#1a1a1a] dark:bg-[#171717] dark:text-[#ededed]">
     <div class="mx-auto w-full max-w-2xl px-6 sm:px-8 pt-16 sm:pt-20 pb-16 flex flex-col items-start gap-4">
       <img src="/avatar.png" alt="Wade" width="40" height="40" class="rounded-full" />
 
       <div class="flex items-center gap-1.5 text-[14px]">
-        <span class="font-semibold text-[#1a1a1a]">Wade</span>
-        <span class="italic text-[#8c8c8c]">@brianawade</span>
+        <span class="font-semibold text-[#1a1a1a] dark:text-[#ededed]">Wade</span>
+        <span class="italic text-[#8c8c8c] dark:text-[#8b8b8b]">@brianawade</span>
       </div>
 
-      <p class="text-[18px] leading-[26px] text-[#2e2e2e]">
+      <p class="text-[18px] leading-[26px] text-[#2e2e2e] dark:text-[#cfcfcf]">
         Designing, learning and building in Memphis, TN.
       </p>
 
@@ -49,8 +53,10 @@ const socials = [
             target="_blank"
             rel="noreferrer"
             class:list={[
-              'inline-flex items-center gap-1.5 rounded-md border bg-white px-2.5 py-1.5 text-[12px] transition-colors hover:bg-[#fafafa]',
-              s.muted ? 'border-[#d9d9d9] text-[#999]' : 'border-[#c7c7c7] text-[#333]',
+              'inline-flex items-center gap-1.5 rounded-md border bg-white px-2.5 py-1.5 text-[12px] transition-colors hover:bg-[#fafafa] dark:bg-[#222] dark:hover:bg-[#2e2e2e]',
+              s.muted
+                ? 'border-[#d9d9d9] text-[#999] dark:border-white/10 dark:text-[#666]'
+                : 'border-[#c7c7c7] text-[#333] dark:border-white/10 dark:text-[#cfcfcf]',
             ]}
           >
             <SocialIcon name={s.icon} size={12} />
@@ -67,9 +73,11 @@ const socials = [
         <GitHubContributions
           contributions={contributions}
           githubProfileUrl={GITHUB_PROFILE_URL}
+          daysOfWeek={WEEKDAYS}
+          rangeLabel={`in ${YEAR}`}
         />
       ) : (
-        <GitHubContributionsFallback />
+        <GitHubContributionsFallback rows={WEEKDAYS.length} />
       )}
     </div>
   </main>

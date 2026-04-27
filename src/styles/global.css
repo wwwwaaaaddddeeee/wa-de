@@ -2,7 +2,25 @@
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 
-@custom-variant dark (&:is(.dark *));
+@custom-variant dark (@media (prefers-color-scheme: dark));
+
+/* GitHub contribution graph cell colors (light → dark via media query) */
+:root {
+  --gh-l0: #ebedf0;
+  --gh-l1: #9be9a8;
+  --gh-l2: #40c463;
+  --gh-l3: #30a14e;
+  --gh-l4: #216e39;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --gh-l0: #171717;
+    --gh-l1: #311f3e;
+    --gh-l2: #613e7b;
+    --gh-l3: #925db9;
+    --gh-l4: #c27cf6;
+  }
+}
 
 @font-face {
   font-family: 'Geist Pixel';
