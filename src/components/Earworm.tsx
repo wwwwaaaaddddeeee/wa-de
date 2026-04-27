@@ -1,133 +1,31 @@
-import { useEffect, useState, useMemo, useRef, useCallback } from "react";
+import { useCallback, useEffect, useRef, useState } from 'react'
+
+import { StatusIndicator } from '@/components/kibo-ui/status'
 
 interface SpotifyTrack {
-  isPlaying: boolean;
-  title: string;
-  artist: string;
-  album: string;
-  albumImageUrl: string;
-  songUrl: string;
-  playedAt: string;
-  progressMs: number;
-  durationMs: number;
+  isPlaying: boolean
+  title: string
+  artist: string
+  album: string
+  albumImageUrl: string
+  songUrl: string
+  playedAt: string
+  progressMs: number
+  durationMs: number
 }
 
-function formatTime(ms: number) {
-  const secs = Math.floor(ms / 1000);
-  const m = Math.floor(secs / 60);
-  const s = secs % 60;
-  return `${m}:${s.toString().padStart(2, "0")}`;
-}
+const STORAGE_KEY = 'earworm:last-track'
+const POLL_MS = 10_000
 
-function Waveform({ progress }: { progress: number }) {
-  // Generate deterministic bar heights
-  const bars = useMemo(() => {
-    const count = 40;
-    return Array.from({ length: count }, (_, i) => {
-      const seed = Math.sin(i * 12.9898 + 78.233) * 43758.5453;
-      return 0.15 + (seed - Math.floor(seed)) * 0.85;
-    });
-  }, []);
-
-  const progressIndex = Math.floor(progress * bars.length);
-
-  return (
-    <div className="flex items-center gap-[1.5px]" style={{ height: 24 }}>
-      {bars.map((h, i) => (
-        <div
-          key={i}
-          style={{
-            width: 2,
-            height: `${h * 100}%`,
-            borderRadius: 1,
-            background: i <= progressIndex ? "#000" : "#CACACA",
-            transition: "background 0.2s ease",
-          }}
-        />
-      ))}
-    </div>
-  );
-}
-
-function SpotifyLogo({ color = "#999" }: { color?: string }) {
-  return (
-    <svg width="12" height="12" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-      <path
-        d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.502 17.305a.748.748 0 0 1-1.03.249c-2.82-1.723-6.37-2.113-10.553-1.158a.75.75 0 0 1-.334-1.462c4.573-1.045 8.497-.595 11.668 1.34a.75.75 0 0 1 .25 1.031zm1.47-3.267a.937.937 0 0 1-1.287.31c-3.228-1.984-8.15-2.56-11.966-1.4a.938.938 0 0 1-.543-1.796c4.36-1.324 9.778-.682 13.486 1.598a.937.937 0 0 1 .31 1.288zm.127-3.403C15.95 8.603 9.27 8.39 5.4 9.56a1.125 1.125 0 0 1-.652-2.153C9.2 6.072 16.56 6.32 20.436 8.97a1.125 1.125 0 0 1-1.337 1.665z"
-        fill={color}
-      />
-    </svg>
-  );
-}
-
-function ScrollingText({ children }: { children: React.ReactNode }) {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const textRef = useRef<HTMLDivElement>(null);
-  const [shouldScroll, setShouldScroll] = useState(false);
-  const [textWidth, setTextWidth] = useState(0);
-
-  const checkOverflow = useCallback(() => {
-    if (containerRef.current && textRef.current) {
-      const containerW = containerRef.current.offsetWidth;
-      const textW = textRef.current.scrollWidth;
-      setShouldScroll(textW > containerW);
-      setTextWidth(textW);
-    }
-  }, []);
-
-  useEffect(() => {
-    checkOverflow();
-  }, [children, checkOverflow]);
-
-  return (
-    <div ref={containerRef} style={{ overflow: "hidden", flexShrink: 1, minWidth: 0 }}>
-      <div
-        ref={textRef}
-        style={{
-          display: "inline-flex",
-          gap: 4,
-          whiteSpace: "nowrap",
-          fontSize: 11,
-          ...(shouldScroll ? {
-            animation: `marquee ${Math.max(textWidth / 25, 5)}s linear infinite`,
-          } : {}),
-        }}
-      >
-        {children}
-        {shouldScroll && (
-          <>
-            <span style={{ padding: "0 24px", opacity: 0.3 }}>·</span>
-            {children}
-          </>
-        )}
-      </div>
-    </div>
-  );
-}
-
-const STORAGE_KEY = "earworm:last-track";
-const EMPTY_TRACK: SpotifyTrack = {
-  isPlaying: false,
-  title: "",
-  artist: "",
-  album: "",
-  albumImageUrl: "",
-  songUrl: "",
-  playedAt: "",
-  progressMs: 0,
-  durationMs: 0,
-};
-
-/** Read the cached track, scrubbing stale live-playback flags so it always shows as "last listen". */
 function readCachedTrack(): SpotifyTrack | null {
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return null;
-    const parsed = JSON.parse(raw) as SpotifyTrack;
-    if (!parsed?.title) return null;
-    return { ...parsed, isPlaying: false, progressMs: 0 };
+    const raw = localStorage.getItem(STORAGE_KEY)
+    if (!raw) return null
+    const parsed = JSON.parse(raw) as SpotifyTrack
+    if (!parsed?.title) return null
+    return { ...parsed, isPlaying: false, progressMs: 0 }
   } catch {
-    return null;
+    return null
   }
 }
 
@@ -135,247 +33,153 @@ function writeCachedTrack(track: SpotifyTrack) {
   try {
     localStorage.setItem(
       STORAGE_KEY,
-      JSON.stringify({ ...track, isPlaying: false, progressMs: 0 })
-    );
+      JSON.stringify({ ...track, isPlaying: false, progressMs: 0 }),
+    )
   } catch {
-    // private mode / quota — ignore
+    // ignore
   }
 }
 
+const PILL_CLASS =
+  'inline-flex w-[var(--email-pill-w,180px)] items-center gap-1.5 rounded-[5px] bg-black/[0.04] px-2 py-1 text-[11px] tracking-tight text-[#9a9a9a] transition-colors hover:bg-black/[0.06] dark:bg-white/5 dark:text-[#777] dark:hover:bg-white/[0.07]'
+
+function Marquee({ children }: { children: React.ReactNode }) {
+  const containerRef = useRef<HTMLDivElement>(null)
+  const trackRef = useRef<HTMLDivElement>(null)
+  const [shouldScroll, setShouldScroll] = useState(false)
+  const [duration, setDuration] = useState(10)
+
+  useEffect(() => {
+    const container = containerRef.current
+    const track = trackRef.current
+    if (!container || !track) return
+    // measure single copy width via the first child
+    const first = track.firstElementChild as HTMLElement | null
+    const copyWidth = first?.offsetWidth ?? 0
+    const overflows = copyWidth > container.offsetWidth
+    setShouldScroll(overflows)
+    if (overflows) {
+      setDuration(Math.max(copyWidth / 18, 9))
+    }
+  }, [children])
+
+  return (
+    <div ref={containerRef} className="min-w-0 flex-1 overflow-hidden">
+      <div
+        ref={trackRef}
+        className="inline-flex whitespace-nowrap"
+        style={shouldScroll ? { animation: `marquee ${duration}s linear infinite` } : undefined}
+      >
+        <span className="inline-flex shrink-0">{children}</span>
+        {shouldScroll ? (
+          <>
+            <span className="inline-block w-8 shrink-0" aria-hidden />
+            <span className="inline-flex shrink-0" aria-hidden>
+              {children}
+            </span>
+            <span className="inline-block w-8 shrink-0" aria-hidden />
+          </>
+        ) : null}
+      </div>
+    </div>
+  )
+}
+
 export default function Earworm() {
-  const [track, setTrack] = useState<SpotifyTrack | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
-  const [localProgress, setLocalProgress] = useState(0);
+  const [track, setTrack] = useState<SpotifyTrack | null>(null)
+  const [loading, setLoading] = useState(true)
 
   const fetchTrack = useCallback(async () => {
     try {
-      const res = await fetch("/api/spotify/now-playing", { cache: "no-store" });
-      if (!res.ok) throw new Error();
-      const data = (await res.json()) as SpotifyTrack;
-      setError(false);
+      const res = await fetch('/api/spotify/now-playing', { cache: 'no-store' })
+      if (!res.ok) throw new Error()
+      const data = (await res.json()) as SpotifyTrack
       if (data.title) {
-        setTrack(data);
-        setLocalProgress(data.progressMs ?? 0);
-        writeCachedTrack(data);
-      } else {
-        // API returned empty — keep whatever we already had so the widget
-        // doesn't blank on a transient Spotify gap.
-        setTrack((prev) => (prev && prev.title ? prev : EMPTY_TRACK));
+        setTrack(data)
+        writeCachedTrack(data)
       }
     } catch {
-      setError(true);
-      setTrack((prev) => (prev && prev.title ? prev : EMPTY_TRACK));
+      // keep previous state
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  }, []);
+  }, [])
 
-  // Hydrate from localStorage, then poll the API.
   useEffect(() => {
-    const cached = readCachedTrack();
+    const cached = readCachedTrack()
     if (cached) {
-      setTrack(cached);
-      setLoading(false);
+      setTrack(cached)
+      setLoading(false)
     }
-    fetchTrack();
-    const interval = setInterval(fetchTrack, 10_000);
-    return () => clearInterval(interval);
-  }, [fetchTrack]);
+    fetchTrack()
+    const interval = setInterval(fetchTrack, POLL_MS)
+    return () => clearInterval(interval)
+  }, [fetchTrack])
 
-  // Tick local progress every second when playing
-  useEffect(() => {
-    if (!track?.isPlaying) return;
-    const interval = setInterval(() => {
-      setLocalProgress((p) => Math.min(p + 1000, track.durationMs));
-    }, 1000);
-    return () => clearInterval(interval);
-  }, [track?.isPlaying, track?.durationMs]);
-
-  if (loading || !track) {
+  if (loading && !track) {
     return (
-      <div
-        className="flex flex-col items-center gap-1.5"
-        style={{ fontSize: "14px", opacity: 0.7 }}
-      >
-        <div
-          className="inline-flex items-center gap-1 rounded-full animate-pulse"
-          style={{
-            border: "0.5px solid rgba(0,0,0,0.06)",
-            padding: "2px 7px",
-            height: 22,
-            width: 108,
-            background: "rgba(0,0,0,0.04)",
-          }}
-        />
-        <div
-          className="inline-flex items-center gap-2 rounded-full animate-pulse"
-          style={{
-            border: "0.5px solid rgba(0,0,0,0.08)",
-            padding: "5px 10px",
-            height: 30,
-            width: "min(240px, 70vw)",
-            maxWidth: "min(240px, 70vw)",
-            background: "var(--faint)",
-          }}
-        />
+      <div className={PILL_CLASS} aria-label="Loading recent track">
+        <SpotifyIcon />
+        <span className="truncate">Loading…</span>
       </div>
-    );
+    )
   }
 
-  const hasTrack = Boolean(track.title?.trim());
-  const isPlaying = track.isPlaying && hasTrack;
-  const statusMuted = !isPlaying;
-  /** Empty placeholder is dimmest; last listen is muted; live playback is full strength. */
-  const songPillOpacity = !hasTrack ? 0.5 : isPlaying ? 1 : 0.82;
+  if (!track || !track.title) {
+    return (
+      <div className={PILL_CLASS}>
+        <SpotifyIcon />
+        <span className="truncate">No recent track</span>
+      </div>
+    )
+  }
 
-  const body = (
+  const content = (
     <>
-      {/* Song pill */}
-      <div
-        className="inline-flex items-center justify-center gap-2"
-        style={{
-          background: "var(--faint)",
-          border: "0.5px solid rgba(0,0,0,0.12)",
-          borderRadius: 999,
-          padding: "5px 10px",
-          height: 30,
-          maxWidth: "min(240px, 70vw)",
-          overflow: "hidden",
-          opacity: songPillOpacity,
-          transition: "opacity 0.3s ease",
-        }}
-      >
-        {hasTrack && track.albumImageUrl ? (
-          <img
-            src={track.albumImageUrl}
-            alt={track.album || ""}
-            width={20}
-            height={20}
-            className="shrink-0"
-            style={{
-              borderRadius: 4,
-              opacity: isPlaying ? 1 : 0.72,
-              filter: isPlaying ? undefined : "grayscale(0.35)",
-              transition: "opacity 0.3s ease, filter 0.3s ease",
-            }}
-          />
-        ) : (
-          <div
-            className="shrink-0"
-            style={{
-              width: 20,
-              height: 20,
-              borderRadius: 4,
-              background: "rgba(0,0,0,0.06)",
-            }}
-          />
-        )}
-        {hasTrack ? (
-          <ScrollingText>
-            <span
-              style={{
-                color: isPlaying ? "var(--track-title)" : "var(--muted)",
-                opacity: isPlaying ? 1 : 0.92,
-              }}
-            >
-              {track.title}
-            </span>
-            <span
-              className="font-semibold"
-              style={{
-                color: isPlaying ? "var(--track-artist)" : "var(--muted)",
-                opacity: isPlaying ? 1 : 0.88,
-              }}
-            >
-              {track.artist}
-            </span>
-          </ScrollingText>
-        ) : (
-          <span
-            style={{
-              fontSize: 11,
-              color: "var(--muted)",
-              whiteSpace: "nowrap",
-            }}
-          >
-            {error ? "Couldn't load playback" : "Nothing playing recently"}
-          </span>
-        )}
-      </div>
-
-      {/* Status pill */}
-      <div
-        className="inline-flex items-center gap-1"
-        style={{
-          background: isPlaying ? "rgba(117, 255, 79, 0.05)" : "transparent",
-          border: isPlaying ? "0.5px solid rgba(117, 255, 79, 0.3)" : "0.5px solid rgba(0,0,0,0.06)",
-          borderRadius: 999,
-          padding: "2px 7px",
-          whiteSpace: "nowrap",
-          transition: "background 0.3s ease, border 0.3s ease, opacity 0.3s ease",
-          opacity: statusMuted ? 0.55 : 1,
-        }}
-      >
-        <span
-          style={{
-            display: "inline-flex",
-            alignItems: "center",
-            lineHeight: 0,
-            transform: "scale(0.7)",
-            transformOrigin: "center",
-            opacity: statusMuted ? 0.5 : 1,
-          }}
-        >
-          <SpotifyLogo color={statusMuted ? "var(--muted)" : "#DADADA"} />
+      {track.isPlaying ? (
+        <span className="group online mr-1 shrink-0" aria-label="Now playing">
+          <StatusIndicator />
         </span>
-        <span
-          style={{
-            fontSize: 7,
-            fontWeight: 500,
-            letterSpacing: "0.08em",
-            color: isPlaying ? "#75FF4F" : "var(--muted)",
-            fontFamily: "'Geist Pixel', monospace",
-            textShadow: isPlaying ? "0 0 8px rgba(117, 255, 79, 0.6), 0 0 20px rgba(117, 255, 79, 0.3)" : "none",
-            transition: "color 0.3s ease, text-shadow 0.3s ease",
-          }}
-        >
-          {isPlaying ? "LISTENING NOW" : "LAST LISTEN"}
-        </span>
-      </div>
+      ) : null}
+      {track.albumImageUrl ? (
+        <img
+          src={track.albumImageUrl}
+          alt=""
+          width={14}
+          height={14}
+          className="rounded-[2px] shrink-0"
+        />
+      ) : (
+        <SpotifyIcon />
+      )}
+      <Marquee>
+        <span className="text-[#1f1f1f] dark:text-[#ededed]">{track.title}</span>
+        <span className="text-[#9a9a9a] dark:text-[#777]"> — {track.artist}</span>
+      </Marquee>
     </>
-  );
+  )
 
-  const interactive = hasTrack && Boolean(track.songUrl);
-
-  if (interactive) {
+  if (track.songUrl) {
     return (
-      <a
-        href={track.songUrl}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="flex flex-col items-center gap-1.5 no-underline transition-all duration-300 ease-out hover:scale-[1.005]"
-        style={{
-          background: "transparent",
-          border: "none",
-          color: "inherit",
-          fontSize: "14px",
-        }}
-      >
-        {body}
+      <a href={track.songUrl} target="_blank" rel="noreferrer" className={PILL_CLASS}>
+        {content}
       </a>
-    );
+    )
   }
+  return <div className={PILL_CLASS}>{content}</div>
+}
 
+function SpotifyIcon() {
   return (
-    <div
-      className="flex flex-col items-center gap-1.5"
-      style={{
-        color: "inherit",
-        fontSize: "14px",
-      }}
+    <svg
+      width="12"
+      height="12"
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      className="shrink-0 text-[#1f1f1f] dark:text-[#ededed]"
+      aria-hidden="true"
     >
-      {body}
-    </div>
-  );
+      <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.502 17.305a.748.748 0 0 1-1.03.249c-2.82-1.723-6.37-2.113-10.553-1.158a.75.75 0 0 1-.334-1.462c4.573-1.045 8.497-.595 11.668 1.34a.75.75 0 0 1 .25 1.031zm1.47-3.267a.937.937 0 0 1-1.287.31c-3.228-1.984-8.15-2.56-11.966-1.4a.938.938 0 0 1-.543-1.796c4.36-1.324 9.778-.682 13.486 1.598a.937.937 0 0 1 .31 1.288zm.127-3.403C15.95 8.603 9.27 8.39 5.4 9.56a1.125 1.125 0 0 1-.652-2.153C9.2 6.072 16.56 6.32 20.436 8.97a1.125 1.125 0 0 1-1.337 1.665z" />
+    </svg>
+  )
 }

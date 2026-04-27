@@ -5,6 +5,7 @@ import {
   GitHubContributionsFallback,
 } from '@/components/github-contributions'
 import { EmailPill } from '@/components/EmailPill'
+import Earworm from '@/components/Earworm'
 import SocialIcon from '@/components/SocialIcon.astro'
 import { getCachedContributions, type Contributions } from '@/lib/get-cached-contributions'
 
@@ -34,12 +35,14 @@ const socials = [
     <div class="mx-auto w-full max-w-2xl px-8 sm:px-12 pt-16 sm:pt-20 pb-16 flex flex-col items-start gap-4">
       <img src="/avatar.png" alt="Wade" width="40" height="40" class="rounded-full" />
 
-      <div class="flex flex-wrap items-center gap-x-1.5 gap-y-2 text-[14px]">
+      <div class="flex items-center gap-1.5 text-[14px]">
         <span class="font-semibold text-[#1a1a1a] dark:text-[#ededed]">Wade</span>
         <span class="italic text-[#8c8c8c] dark:text-[#8b8b8b]">@brianawade</span>
-        <span class="ml-3">
-          <EmailPill client:load email="wade@hellowade.dev" />
-        </span>
+      </div>
+
+      <div class="flex flex-wrap items-center gap-2">
+        <EmailPill client:load email="wade@hellowade.dev" />
+        <Earworm client:load />
       </div>
 
       <div class="h-2"></div>
@@ -56,7 +59,7 @@ const socials = [
             href={s.href}
             target="_blank"
             rel="noreferrer"
-            class="inline-flex items-center gap-1 rounded-md border border-black/[0.04] bg-white px-2 py-1 text-[11px] transition-colors hover:bg-[#fafafa] dark:border-white/5 dark:bg-[#222] dark:hover:bg-[#2e2e2e]"
+            class="inline-flex items-center gap-1 rounded-[5px] border border-black/[0.04] bg-white px-2 py-1 text-[11px] transition-colors hover:bg-[#fafafa] dark:border-white/5 dark:bg-[#222] dark:hover:bg-[#2e2e2e]"
           >
             <span class="text-[#0A0A0D] dark:text-[#ededed]">
               <SocialIcon name={s.icon} size={12} />
