@@ -39,7 +39,7 @@ function writeCachedTrack(track: SpotifyTrack) {
 }
 
 const PILL_CLASS =
-  'inline-flex w-[var(--email-pill-w,180px)] items-center gap-1.5 rounded-[5px] bg-black/[0.04] px-2 py-1 text-[11px] tracking-tight text-[#9a9a9a] transition-colors hover:bg-black/[0.06] dark:bg-white/5 dark:text-[#777] dark:hover:bg-white/[0.07]'
+  'inline-flex w-[var(--email-pill-w,136px)] items-center gap-1 rounded-[5px] border border-black/[0.04] bg-white px-2 py-1 text-[11px] tracking-tight text-[#1f1f1f] transition-colors hover:bg-[#fafafa] dark:border-white/5 dark:bg-[#222] dark:text-[#777] dark:hover:bg-[#2e2e2e]'
 
 function Marquee({ children }: { children: React.ReactNode }) {
   const containerRef = useRef<HTMLDivElement>(null)

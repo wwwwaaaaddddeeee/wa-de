@@ -35,25 +35,19 @@ const socials = [
     <div class="mx-auto w-full max-w-2xl px-8 sm:px-12 pt-16 sm:pt-20 pb-16 flex flex-col items-start gap-4">
       <img src="/avatar.png" alt="Wade" width="40" height="40" class="rounded-full" />
 
-      <div class="flex items-center gap-1.5 text-[14px]">
+      <p class="text-[15px] leading-[22px] text-[#2e2e2e] dark:text-[#cfcfcf]">
         <span class="font-semibold text-[#1a1a1a] dark:text-[#ededed]">Wade</span>
+        {' '}
         <span class="italic text-[#8c8c8c] dark:text-[#8b8b8b]">@brianawade</span>
-      </div>
-
-      <div class="flex flex-wrap items-center gap-2">
-        <EmailPill client:load email="wade@hellowade.dev" />
-        <Earworm client:load />
-      </div>
-
-      <div class="h-2"></div>
-
-      <p class="text-[16px] leading-[24px] text-[#2e2e2e] dark:text-[#cfcfcf]">
+        <span class="mx-2 text-[#9a9a9a] dark:text-[#777]" aria-hidden="true">–</span>
         Designing, learning and building in Memphis, TN with big Human Interface dreams.
       </p>
 
       <div class="h-3"></div>
 
-      <div class="flex flex-wrap gap-1.5">
+      <div class="flex flex-wrap items-center gap-1.5">
+        <EmailPill client:load email="wade@hellowade.dev" />
+        <Earworm client:load />
         {socials.map((s) => (
           <a
             href={s.href}
