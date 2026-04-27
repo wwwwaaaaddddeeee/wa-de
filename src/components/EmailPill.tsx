@@ -21,7 +21,7 @@ export function EmailPill({ email }: { email: string }) {
       aria-label={`Copy ${email}`}
     >
       <CopyIcon />
-      <span className="font-mono tracking-tight">{copied ? 'Copied' : email}</span>
+      <span className="tracking-tight">{copied ? 'Copied' : email}</span>
     </button>
   )
 }
