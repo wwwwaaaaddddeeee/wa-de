@@ -15,8 +15,8 @@
 @media (prefers-color-scheme: dark) {
   :root {
     --gh-l0: #171717;
-    --gh-l1: #311f3e;
-    --gh-l2: #613e7b;
+    --gh-l1: #2a2a2a;
+    --gh-l2: #4a4250;
     --gh-l3: #925db9;
     --gh-l4: #c27cf6;
   }
