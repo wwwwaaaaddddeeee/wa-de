@@ -25,7 +25,7 @@ try {
 const socials = [
   { label: 'GitHub', href: 'https://github.com/', icon: 'github' as const },
   { label: 'LinkedIn', href: 'https://linkedin.com/', icon: 'linkedin' as const },
-  { label: 'x / Twitter', href: 'https://x.com/', icon: 'x' as const },
+  { label: 'X', href: 'https://x.com/', icon: 'x' as const },
   { label: 'Instagram', href: 'https://instagram.com/', icon: 'instagram' as const, muted: true },
 ]
 ---
@@ -39,6 +39,10 @@ const socials = [
         <span class="font-semibold text-[#1a1a1a] dark:text-[#ededed]">Wade</span>
         <span class="italic text-[#8c8c8c] dark:text-[#8b8b8b]">@brianawade</span>
       </div>
+
+      <EmailPill client:load email="wade@hellowade.dev" />
+
+      <div class="h-2"></div>
 
       <p class="text-[18px] leading-[26px] text-[#2e2e2e] dark:text-[#cfcfcf]">
         Designing, learning and building in Memphis, TN.
@@ -64,8 +68,6 @@ const socials = [
           </a>
         ))}
       </div>
-
-      <EmailPill client:load email="wade@hellowade.dev" />
 
       <div class="h-6"></div>
 
