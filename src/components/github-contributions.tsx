@@ -39,14 +39,14 @@ function monthLabels(weeks: Week[]): Label[] {
 export function GitHubContributionsFallback({ rows = 7 }: { rows?: number }) {
   const h = HEADER + rows * STEP - GAP
   return (
-    <div className="w-full rounded-xl border border-zinc-200 bg-white dark:border-white/10 dark:bg-[#1b1b1b]">
+    <div className="w-full rounded-xl border border-black/[0.04] bg-white dark:border-white/5 dark:bg-[#1b1b1b]">
       <div className="px-2 py-2">
         <div
           className="w-full animate-pulse rounded bg-zinc-100 dark:bg-white/5"
           style={{ height: h }}
         />
       </div>
-      <div className="flex items-center justify-between border-t border-zinc-200 px-3 py-2 text-[12px] text-zinc-500 dark:border-white/10 dark:text-zinc-400">
+      <div className="flex items-center justify-between border-t border-black/[0.04] px-3 py-2 text-[12px] text-zinc-500 dark:border-white/5 dark:text-zinc-400">
         <span>Loading contributions…</span>
         <span className="invisible">Less More</span>
       </div>
@@ -77,7 +77,7 @@ export function GitHubContributions({
   const labels = monthLabels(contributions.weeks)
 
   return (
-    <div className="w-full rounded-xl border border-zinc-200 bg-white dark:border-white/10 dark:bg-[#1b1b1b]">
+    <div className="w-full rounded-xl border border-black/[0.04] bg-white dark:border-white/5 dark:bg-[#1b1b1b]">
       <div
         className="max-w-full overflow-x-auto overflow-y-hidden p-2 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
         role="img"
@@ -125,7 +125,7 @@ export function GitHubContributions({
           </g>
         </svg>
       </div>
-      <div className="flex items-center justify-between gap-3 border-t border-zinc-200 px-3 py-2 text-[12px] text-zinc-600 dark:border-white/10 dark:text-zinc-400">
+      <div className="flex items-center justify-between gap-3 border-t border-black/[0.04] px-3 py-2 text-[12px] text-zinc-600 dark:border-white/5 dark:text-zinc-400">
         <a
           href={githubProfileUrl}
           target="_blank"
