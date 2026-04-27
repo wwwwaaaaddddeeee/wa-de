@@ -65,15 +65,43 @@ const socials = [
 
       <div class="h-6"></div>
 
-      {contributions ? (
-        <GitHubContributions
-          contributions={contributions}
-          githubProfileUrl={GITHUB_PROFILE_URL}
-          rangeLabel={`in ${YEAR}`}
-        />
-      ) : (
-        <GitHubContributionsFallback />
-      )}
+      <div class="grid w-full grid-cols-2 gap-4">
+        {contributions ? (
+          <GitHubContributions
+            contributions={contributions}
+            githubProfileUrl={GITHUB_PROFILE_URL}
+            rangeLabel={`in ${YEAR}`}
+          />
+        ) : (
+          <GitHubContributionsFallback />
+        )}
+        <div class="aspect-square w-full rounded-xl border border-black/[0.04] bg-white p-3 dark:border-white/5 dark:bg-[#1b1b1b]" aria-hidden="true"></div>
+      </div>
     </div>
   </main>
 </Layout>
+
+<script is:inline>
+  function centerCurrentMonth() {
+    document.querySelectorAll('[data-gh-scroll]').forEach((container) => {
+      const svg = container.querySelector('svg')
+      if (!svg) return
+      const month = new Date().toLocaleString('en', { month: 'short', timeZone: 'UTC' })
+      const label = Array.from(svg.querySelectorAll('text')).find(
+        (t) => (t.textContent || '').trim() === month
+      )
+      if (!label) return
+      const lr = label.getBoundingClientRect()
+      const cr = container.getBoundingClientRect()
+      const monthWidth = lr.width
+      const targetX = lr.left - cr.left + container.scrollLeft + monthWidth / 2
+      container.scrollLeft = targetX - container.clientWidth / 2
+    })
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', centerCurrentMonth)
+  } else {
+    centerCurrentMonth()
+  }
+  window.addEventListener('load', centerCurrentMonth)
+</script>

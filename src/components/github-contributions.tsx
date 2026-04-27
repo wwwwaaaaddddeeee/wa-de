@@ -36,19 +36,15 @@ function monthLabels(weeks: Week[]): Label[] {
   return labels
 }
 
-export function GitHubContributionsFallback({ rows = 7 }: { rows?: number }) {
-  const h = HEADER + rows * STEP - GAP
+export function GitHubContributionsFallback({ rows: _rows = 7 }: { rows?: number }) {
   return (
-    <div className="w-full rounded-xl border border-black/[0.04] bg-white dark:border-white/5 dark:bg-[#1b1b1b]">
-      <div className="px-2 py-2">
-        <div
-          className="w-full animate-pulse rounded bg-zinc-100 dark:bg-white/5"
-          style={{ height: h }}
-        />
+    <div className="flex aspect-square w-full flex-col rounded-xl border border-black/[0.04] bg-white p-3 dark:border-white/5 dark:bg-[#1b1b1b]">
+      <div className="flex flex-col gap-1.5 px-1 pt-1 pb-3">
+        <div className="h-6 w-16 animate-pulse rounded bg-zinc-100 dark:bg-white/5" />
+        <div className="h-3 w-40 animate-pulse rounded bg-zinc-100 dark:bg-white/5" />
       </div>
-      <div className="flex items-center justify-between border-t border-black/[0.04] px-3 py-2 text-[12px] text-zinc-500 dark:border-white/5 dark:text-zinc-400">
-        <span>Loading contributions…</span>
-        <span className="invisible">Less More</span>
+      <div className="flex flex-1 animate-pulse items-end overflow-hidden">
+        <div className="h-full w-full rounded bg-zinc-100 dark:bg-white/5" />
       </div>
     </div>
   )
@@ -77,17 +73,30 @@ export function GitHubContributions({
   const labels = monthLabels(contributions.weeks)
 
   return (
-    <div className="w-full rounded-xl border border-black/[0.04] bg-white dark:border-white/5 dark:bg-[#1b1b1b]">
+    <div className="flex aspect-square w-full flex-col rounded-xl border border-black/[0.04] bg-white p-3 dark:border-white/5 dark:bg-[#1b1b1b]">
+      <div className="hidden flex-col gap-0.5 px-1 pt-1 pb-3 sm:flex">
+        <span className="text-[26px] font-semibold leading-none tracking-tight text-[#1a1a1a] dark:text-[#ededed]">
+          {contributions.total.toLocaleString()}
+        </span>
+        <a
+          href={githubProfileUrl}
+          target="_blank"
+          rel="noreferrer"
+          className="text-[12px] text-[#9a9a9a] hover:text-[#1f1f1f] dark:text-[#777] dark:hover:text-[#ededed]"
+        >
+          contributions {rangeLabel} on GitHub →
+        </a>
+      </div>
       <div
-        className="max-w-full overflow-x-auto overflow-y-hidden p-2 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        className="flex flex-1 items-center overflow-x-auto overflow-y-hidden sm:items-end [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
         role="img"
         aria-label={`${contributions.total.toLocaleString()} GitHub contributions ${rangeLabel}`}
+        data-gh-scroll
       >
         <svg
-          width={totalW}
-          height={totalH}
           viewBox={`0 0 ${totalW} ${totalH}`}
-          className="block overflow-visible"
+          preserveAspectRatio="xMinYMid meet"
+          className="block h-full w-auto overflow-visible"
         >
           <title>GitHub Contributions</title>
           <g className="fill-zinc-500 dark:fill-zinc-400" fontSize={10} fontFamily="inherit">
@@ -125,29 +134,19 @@ export function GitHubContributions({
           </g>
         </svg>
       </div>
-      <div className="flex items-center justify-between gap-3 border-t border-black/[0.04] px-3 py-2 text-[12px] text-zinc-600 dark:border-white/5 dark:text-zinc-400">
-        <a
-          href={githubProfileUrl}
-          target="_blank"
-          rel="noreferrer"
-          className="truncate hover:text-zinc-900 dark:hover:text-zinc-100"
-        >
-          {contributions.total.toLocaleString()} contributions {rangeLabel} on GitHub
-        </a>
-        <div className="flex shrink-0 items-center gap-1">
-          <span className="text-[11px] text-zinc-500 dark:text-zinc-400">Less</span>
-          <div className="flex items-center gap-[3px]">
-            {LEVEL_VARS.map((c, i) => (
-              <span
-                key={i}
-                className="inline-block rounded-[2px]"
-                style={{ width: CELL, height: CELL, background: c }}
-                aria-hidden
-              />
-            ))}
-          </div>
-          <span className="text-[11px] text-zinc-500 dark:text-zinc-400">More</span>
+      <div className="hidden items-center justify-end gap-1 px-1 pt-3 text-[11px] text-zinc-500 sm:flex dark:text-zinc-400">
+        <span>Less</span>
+        <div className="flex items-center gap-[3px]">
+          {LEVEL_VARS.map((c, i) => (
+            <span
+              key={i}
+              className="inline-block rounded-[2px]"
+              style={{ width: CELL, height: CELL, background: c }}
+              aria-hidden
+            />
+          ))}
         </div>
+        <span>More</span>
       </div>
     </div>
   )
