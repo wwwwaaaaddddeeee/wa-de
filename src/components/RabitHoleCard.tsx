@@ -1,3 +1,5 @@
+import { PixelEyes } from '@/components/PixelEyes'
+
 export function RabitHoleCard() {
   return (
     <div className="relative aspect-square w-full overflow-hidden rounded-xl">
@@ -11,6 +13,21 @@ export function RabitHoleCard() {
           className="block h-full w-full"
         />
       </picture>
+      <PixelEyes
+        className="absolute inset-0"
+        leftEye={{
+          top: '61.3%',
+          left: '25.3%',
+          width: '11%',
+          height: '24%',
+        }}
+        rightEye={{
+          top: '61.3%',
+          left: '62.7%',
+          width: '13%',
+          height: '24%',
+        }}
+      />
     </div>
   )
 }
