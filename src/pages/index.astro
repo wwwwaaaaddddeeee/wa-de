@@ -6,6 +6,7 @@ import {
 } from '@/components/github-contributions'
 import { EmailPill } from '@/components/EmailPill'
 import Earworm from '@/components/Earworm'
+import { RabitHoleCard } from '@/components/RabitHoleCard'
 import SocialIcon from '@/components/SocialIcon.astro'
 import { getCachedContributions, type Contributions } from '@/lib/get-cached-contributions'
 
@@ -75,7 +76,7 @@ const socials = [
         ) : (
           <GitHubContributionsFallback />
         )}
-        <div class="aspect-square w-full rounded-xl border border-black/[0.04] bg-white p-3 dark:border-white/5 dark:bg-[#1b1b1b]" aria-hidden="true"></div>
+        <RabitHoleCard client:load />
       </div>
     </div>
   </main>
