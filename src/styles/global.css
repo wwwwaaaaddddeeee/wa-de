@@ -110,6 +110,15 @@ body {
   box-sizing: border-box;
 }
 
+::selection {
+  background: #FF5C00;
+  color: #ffffff;
+}
+::-moz-selection {
+  background: #FF5C00;
+  color: #ffffff;
+}
+
 @keyframes glowPulse {
   0%, 100% { transform: scale(1); opacity: 0.15; }
   50% { transform: scale(1.3); opacity: 0.3; }
