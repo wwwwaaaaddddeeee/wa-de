@@ -1,7 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 
-import { StatusIndicator } from '@/components/kibo-ui/status'
-
 interface SpotifyTrack {
   isPlaying: boolean
   title: string
@@ -136,11 +134,7 @@ export default function Earworm() {
 
   const content = (
     <>
-      {track.isPlaying ? (
-        <span className="group online mr-1 shrink-0" aria-label="Now playing">
-          <StatusIndicator />
-        </span>
-      ) : null}
+      <NowPlayingIndicator playing={track.isPlaying} />
       {track.albumImageUrl ? (
         <img
           src={track.albumImageUrl}
@@ -169,17 +163,45 @@ export default function Earworm() {
   return <div className={PILL_CLASS}>{content}</div>
 }
 
+const SPOTIFY_MASK_STYLE: React.CSSProperties = {
+  maskImage: "url('/spotify-mark.png')",
+  maskSize: 'contain',
+  maskRepeat: 'no-repeat',
+  maskPosition: 'center',
+  WebkitMaskImage: "url('/spotify-mark.png')",
+  WebkitMaskSize: 'contain',
+  WebkitMaskRepeat: 'no-repeat',
+  WebkitMaskPosition: 'center',
+}
+
 function SpotifyIcon() {
   return (
-    <svg
-      width="12"
-      height="12"
-      viewBox="0 0 24 24"
-      fill="currentColor"
-      className="shrink-0 text-[#1f1f1f] dark:text-[#ededed]"
-      aria-hidden="true"
+    <span
+      className="inline-block size-3 shrink-0 bg-[#1f1f1f] dark:bg-[#ededed]"
+      style={SPOTIFY_MASK_STYLE}
+      aria-hidden
+    />
+  )
+}
+
+function NowPlayingIndicator({ playing }: { playing: boolean }) {
+  return (
+    <span
+      className="relative mr-1 inline-flex size-2.5 shrink-0 items-center justify-center"
+      aria-label={playing ? 'Now playing' : 'Last listen'}
     >
-      <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.502 17.305a.748.748 0 0 1-1.03.249c-2.82-1.723-6.37-2.113-10.553-1.158a.75.75 0 0 1-.334-1.462c4.573-1.045 8.497-.595 11.668 1.34a.75.75 0 0 1 .25 1.031zm1.47-3.267a.937.937 0 0 1-1.287.31c-3.228-1.984-8.15-2.56-11.966-1.4a.938.938 0 0 1-.543-1.796c4.36-1.324 9.778-.682 13.486 1.598a.937.937 0 0 1 .31 1.288zm.127-3.403C15.95 8.603 9.27 8.39 5.4 9.56a1.125 1.125 0 0 1-.652-2.153C9.2 6.072 16.56 6.32 20.436 8.97a1.125 1.125 0 0 1-1.337 1.665z" />
-    </svg>
+      {playing ? (
+        <span className="absolute inset-0 animate-ping rounded-full bg-emerald-500 opacity-75" />
+      ) : null}
+      <span
+        className={
+          playing
+            ? 'relative inline-block size-2.5 bg-emerald-500'
+            : 'relative inline-block size-2.5 bg-[#9a9a9a] dark:bg-[#777]'
+        }
+        style={SPOTIFY_MASK_STYLE}
+        aria-hidden
+      />
+    </span>
   )
 }
