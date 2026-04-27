@@ -13,7 +13,6 @@ const GITHUB_PROFILE_URL = 'https://github.com/wwwwaaaaddddeeee'
 const YEAR = new Date().getFullYear()
 const SINCE = `${YEAR}-01-01`
 const UNTIL = `${YEAR}-12-31`
-const WEEKDAYS = [1, 2, 3, 4, 5]
 
 let contributions: Contributions | null = null
 try {
@@ -75,11 +74,10 @@ const socials = [
         <GitHubContributions
           contributions={contributions}
           githubProfileUrl={GITHUB_PROFILE_URL}
-          daysOfWeek={WEEKDAYS}
           rangeLabel={`in ${YEAR}`}
         />
       ) : (
-        <GitHubContributionsFallback rows={WEEKDAYS.length} />
+        <GitHubContributionsFallback />
       )}
     </div>
   </main>

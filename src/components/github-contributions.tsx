@@ -7,7 +7,7 @@ const LEVEL_VARS = [
   'var(--gh-l3)',
   'var(--gh-l4)',
 ] as const
-const CELL = 11
+const CELL = 15
 const GAP = 3
 const STEP = CELL + GAP
 const HEADER = 22
@@ -39,7 +39,7 @@ function monthLabels(weeks: Week[]): Label[] {
 export function GitHubContributionsFallback({ rows = 7 }: { rows?: number }) {
   const h = HEADER + rows * STEP - GAP
   return (
-    <div className="w-full rounded-xl border border-zinc-200 bg-white dark:border-white/10 dark:bg-[#222]">
+    <div className="w-full rounded-xl border border-zinc-200 bg-white dark:border-white/10 dark:bg-[#1b1b1b]">
       <div className="px-2 py-2">
         <div
           className="w-full animate-pulse rounded bg-zinc-100 dark:bg-white/5"
@@ -77,7 +77,7 @@ export function GitHubContributions({
   const labels = monthLabels(contributions.weeks)
 
   return (
-    <div className="w-full rounded-xl border border-zinc-200 bg-white dark:border-white/10 dark:bg-[#222]">
+    <div className="w-full rounded-xl border border-zinc-200 bg-white dark:border-white/10 dark:bg-[#1b1b1b]">
       <div
         className="max-w-full overflow-x-auto overflow-y-hidden p-2 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
         role="img"
