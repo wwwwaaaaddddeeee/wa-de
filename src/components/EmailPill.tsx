@@ -31,7 +31,7 @@ export function EmailPill({ email }: { email: string }) {
         aria-label={`Copy ${email}`}
         doneIcon={<CheckIcon strokeWidth={3} />}
         errorIcon={<CheckIcon strokeWidth={3} />}
-        className="h-auto gap-1 rounded-[5px] border-0 bg-[#f6f6f6] px-2 py-1 text-[11px] font-normal tracking-tight text-[#1f1f1f] hover:bg-[#efefef] active:bg-[#e6e6e6] dark:bg-[#222] dark:text-[#777] dark:hover:bg-[#2e2e2e] dark:active:bg-[#3a3a3a] [&_svg:not([class*='size-'])]:size-3 [&_svg]:text-[#0A0A0D] dark:[&_svg]:text-[#ededed]"
+        className="h-auto gap-1.5 rounded-[5px] border-0 bg-[#f6f6f6] px-2.5 py-1.5 text-[12px] font-normal tracking-tight text-[#1f1f1f] hover:bg-[#efefef] active:bg-[#e6e6e6] sm:gap-1 sm:px-2 sm:py-1 sm:text-[11px] dark:bg-[#222] dark:text-[#777] dark:hover:bg-[#2e2e2e] dark:active:bg-[#3a3a3a] [&_svg:not([class*='size-'])]:size-3 [&_svg]:text-[#0A0A0D] dark:[&_svg]:text-[#ededed]"
       >
         {email}
       </CopyButton>

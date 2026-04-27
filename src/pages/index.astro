@@ -1,27 +1,9 @@
 ---
 import Layout from '@/layouts/Layout.astro'
-import {
-  GitHubContributions,
-  GitHubContributionsFallback,
-} from '@/components/github-contributions'
 import { EmailPill } from '@/components/EmailPill'
 import Earworm from '@/components/Earworm'
 import { RabitHoleCard } from '@/components/RabitHoleCard'
 import SocialIcon from '@/components/SocialIcon.astro'
-import { getCachedContributions, type Contributions } from '@/lib/get-cached-contributions'
-
-const GITHUB_USERNAME = 'wwwwaaaaddddeeee'
-const GITHUB_PROFILE_URL = 'https://github.com/wwwwaaaaddddeeee'
-const YEAR = new Date().getFullYear()
-const SINCE = `${YEAR}-01-01`
-const UNTIL = `${YEAR}-12-31`
-
-let contributions: Contributions | null = null
-try {
-  contributions = await getCachedContributions(GITHUB_USERNAME, { since: SINCE, until: UNTIL })
-} catch {
-  contributions = null
-}
 
 const socials = [
   { label: 'GitHub', href: 'https://github.com/', icon: 'github' as const },
@@ -33,10 +15,10 @@ const socials = [
 
 <Layout title="Wade — Designer in Memphis">
   <main class="min-h-screen w-full bg-white text-[#1a1a1a] dark:bg-[#171717] dark:text-[#ededed]">
-    <div class="mx-auto w-full max-w-2xl px-8 sm:px-12 pt-16 sm:pt-20 pb-16 flex flex-col items-start gap-4">
+    <div class="mx-auto w-full max-w-2xl px-[35px] sm:px-12 pt-16 sm:pt-20 pb-16 flex flex-col items-start gap-4">
       <img src="/avatar.png" alt="Wade" width="40" height="40" class="rounded-full" />
 
-      <p class="text-[15px] leading-[22px] text-[#2e2e2e] dark:text-[#cfcfcf]">
+      <p class="text-[14px] leading-[21px] sm:text-[15px] sm:leading-[22px] text-[#2e2e2e] dark:text-[#cfcfcf]">
         <span class="font-semibold text-[#1a1a1a] dark:text-[#ededed]">Wade</span>
         <span class="ml-1.5 italic text-[#8c8c8c] dark:text-[#8b8b8b]">@brianawade</span>
         <span class="mx-2 text-[#9a9a9a] dark:text-[#777]" aria-hidden="true">–</span>
@@ -47,13 +29,12 @@ const socials = [
 
       <div class="flex flex-wrap items-center gap-1.5">
         <EmailPill client:load email="wade@hellowade.dev" />
-        <Earworm client:load />
         {socials.map((s) => (
           <a
             href={s.href}
             target="_blank"
             rel="noreferrer"
-            class="inline-flex items-center gap-1 rounded-[5px] bg-[#f6f6f6] px-2 py-1 text-[11px] transition-colors hover:bg-[#efefef] dark:bg-[#222] dark:hover:bg-[#2e2e2e]"
+            class="inline-flex items-center gap-1.5 rounded-[5px] bg-[#f6f6f6] px-2.5 py-1.5 text-[12px] transition-colors hover:bg-[#efefef] sm:gap-1 sm:px-2 sm:py-1 sm:text-[11px] dark:bg-[#222] dark:hover:bg-[#2e2e2e]"
           >
             <span class="text-[#0A0A0D] dark:text-[#ededed]">
               <SocialIcon name={s.icon} size={12} />
@@ -61,47 +42,38 @@ const socials = [
             <span class="text-[#1F1F1F] dark:text-[#777]">{s.label}</span>
           </a>
         ))}
+        <Earworm client:load />
       </div>
 
       <div class="h-6"></div>
 
-      <div class="grid w-full grid-cols-2 gap-4">
-        {contributions ? (
-          <GitHubContributions
-            contributions={contributions}
-            githubProfileUrl={GITHUB_PROFILE_URL}
-            rangeLabel={`in ${YEAR}`}
-          />
-        ) : (
-          <GitHubContributionsFallback />
-        )}
-        <RabitHoleCard client:load />
+      <div class="flex w-full items-start gap-3">
+        <div class="w-1/4">
+          <RabitHoleCard client:load />
+        </div>
+        <a
+          href="https://rabit.wtf"
+          target="_blank"
+          rel="noreferrer"
+          class="mt-3.5 inline-flex items-center gap-0.5 text-[12px] text-[#5a5a5a] underline underline-offset-2 hover:text-[#1f1f1f] dark:text-[#aaaaaa] dark:hover:text-[#ededed]"
+        >
+          rabit.wtf
+          <svg
+            width="10"
+            height="10"
+            viewBox="0 0 10 10"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <path d="M3 7L7 3" />
+            <path d="M3.5 3H7v3.5" />
+          </svg>
+        </a>
       </div>
     </div>
   </main>
 </Layout>
-
-<script is:inline>
-  function centerCurrentMonth() {
-    document.querySelectorAll('[data-gh-scroll]').forEach((container) => {
-      const svg = container.querySelector('svg')
-      if (!svg) return
-      const month = new Date().toLocaleString('en', { month: 'short', timeZone: 'UTC' })
-      const label = Array.from(svg.querySelectorAll('text')).find(
-        (t) => (t.textContent || '').trim() === month
-      )
-      if (!label) return
-      const lr = label.getBoundingClientRect()
-      const cr = container.getBoundingClientRect()
-      const monthWidth = lr.width
-      const targetX = lr.left - cr.left + container.scrollLeft + monthWidth / 2
-      container.scrollLeft = targetX - container.clientWidth / 2
-    })
-  }
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', centerCurrentMonth)
-  } else {
-    centerCurrentMonth()
-  }
-  window.addEventListener('load', centerCurrentMonth)
-</script>
